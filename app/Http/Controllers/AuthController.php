@@ -8,6 +8,8 @@ use Mail;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Illuminate\Support\Facades\Hash;
+use JWTFactory;
+use App\User;
 
 
 class AuthController extends Controller
@@ -15,15 +17,27 @@ class AuthController extends Controller
     public function authenticate(Request $request)
     {
         $credentials = $request->all();
-        try {
-            if (! $token = JWTAuth::attempt($credentials)) {
+        $user = User::where(['email' => $credentials['email']])->first();
+        if(!$user){
             return response()->json(["message" => "Invalid Credentials."], 401);
+        }else{
+            $customClaims = [
+                'full_name' => $user->full_name,
+                'name' => $user->name,
+                'contact' => $user->contact,
+                'email' => $user->email,
+                'image' => $user->image,
+                'type' => $user->type,
+                'status' => $user->status,
+                'balance' => $user->balance,
+            ];
+            $token = JWTAuth::claims($customClaims)->fromUser($user);
+            if(!$token){
+                return response()->json(["message" => "Invalid Credentials."], 401);
+            }else{
+                return response()->json(["message" => "Login Successful.", 'token' => 'Bearer '.$token], 200);
             }
-        } catch (JWTException $e) {
-            return response()->json(["message" => "Invalid Credentials."], 500);
         }
-        return response()->json(["message" => "Login Successful.", 'token' => 'Bearer '.$token], 200);
-        // return response()->json(["message" => "Login Successful.", 'token' => $token], 200);
     }
 
 
