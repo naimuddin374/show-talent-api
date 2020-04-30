@@ -23,9 +23,9 @@ class WorkExpController extends Controller
     }
 
 
-    public function byUserId($userId)
+    public function getByUserId($id)
     {
-        $data = WorkExpModel::where('user_id', $userId)->orderBy('id', 'DESC')->get();
+        $data = WorkExpModel::where('user_id', $id)->orderBy('id', 'DESC')->get();
         return response()->json($data, 200);
     }
 

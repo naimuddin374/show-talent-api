@@ -4,30 +4,28 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\User;
 use Mail;
-// $userKey = $this->encryptor("encrypt", $user->id);
-// $userId = $this->encryptor("decrypt", $userKey);
+use JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Illuminate\Support\Facades\Hash;
+
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function authenticate(Request $request)
     {
-        $post = $request->all();
-        $validator = Validator::make($post, [
-            "email" => "required|email",
-            "password" => "required",
-        ]);
-        if ($validator->fails()) {
-            return back()->with($validator->errors());
+        $credentials = $request->all();
+        try {
+            if (! $token = JWTAuth::attempt($credentials)) {
+            return response()->json(["message" => "Invalid Credentials."], 401);
+            }
+        } catch (JWTException $e) {
+            return response()->json(["message" => "Invalid Credentials."], 500);
         }
-        $data = User::where(["email" => $post["email"], "password" => md5($post["password"])])->get();
-        if(isset($data[0])){
-            return response()->json(["message" => "Login Successful.", "user" => $data[0]], 200);
-        }else{
-            return response()->json(["message" => "Invalid email or password."], 401);
-        }
+        return response()->json(["message" => "Login Successful.", 'token' => 'Bearer '.$token], 200);
+        // return response()->json(["message" => "Login Successful.", 'token' => $token], 200);
     }
+
 
     public function forgotPassword(Request $request)
     {

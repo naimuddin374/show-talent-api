@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\PostModel;
 use App\AdModel;
 use File;
 
@@ -12,16 +13,56 @@ class AdController extends Controller
 {
     public function adminView()
     {
-        $data = AdModel::orderBy('id', 'DESC')->get();
+        $data = AdModel::leftJoin('users', 'users.id', '=', 'ads.user_id')
+                ->select('users.name as user_name','ads.*')
+                ->orderBy('ads.id', 'DESC')
+                ->get();
+        return response()->json($data, 200);
+    }
+
+
+    public function detail($id)
+    {
+        $data = AdModel::leftJoin('users', 'users.id', '=', 'ads.user_id')
+                ->select('users.name as user_name','ads.*')
+                ->orderBy('ads.id', 'DESC')
+                ->where('ads.id',$id)
+                ->get();
+        return response()->json($data, 200);
+    }
+
+    public function getByUserId($id)
+    {
+        $data = AdModel::leftJoin('users', 'users.id', '=', 'ads.user_id')
+                ->select('users.name as user_name','ads.*')
+                ->orderBy('ads.id', 'DESC')
+                ->where('users.id',$id)
+                ->get();
         return response()->json($data, 200);
     }
 
 
     public function view()
     {
-        $data = AdModel::where('status', 1)->orderBy('id', 'DESC')->get();
+        $data = AdModel::leftJoin('users', 'users.id', '=', 'ads.user_id')
+                ->select('users.name as user_name','posts.*')
+                ->where('ads.status', 1)
+                ->orderBy('ads.id', 'DESC')
+                ->get();
         return response()->json($data, 200);
     }
+
+    public function approve($id)
+    {
+        $data = AdModel::where('id', $id)->update(['status' => 1]);
+        return response()->json(["message" => "Approve successful."], 201);
+    }
+    public function reject($id)
+    {
+        $data = AdModel::where('id', $id)->update(['status' => 2]);
+        return response()->json(["message" => "Rejected successful."], 201);
+    }
+
 
 
     public function store(Request $request)
@@ -38,7 +79,7 @@ class AdController extends Controller
             "page_id" => $post['page_id'],
             "category_id" => $post['category_id'],
             "title" => $post['title'],
-            "vide" => $post['vide'],
+            "video" => $post['video'],
             "hyperlink" => $post['hyperlink'],
             "start_date" => $post['start_date'],
             "end_date" => $post['end_date'],
@@ -53,7 +94,6 @@ class AdController extends Controller
     {
         $post = $request->all();
         $data = [
-            "page_id" => $post['page_id'],
             "category_id" => $post['category_id'],
             "title" => $post['title'],
             "vide" => $post['vide'],

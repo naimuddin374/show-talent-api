@@ -20,6 +20,17 @@ class EbookController extends Controller
         return response()->json($data, 200);
     }
 
+    public function view()
+    {
+        $data = EbookModel::leftJoin('users', 'users.id', '=', 'ebooks.user_id')
+                ->leftJoin('categories', 'categories.id', '=', 'ebooks.category_id')
+                ->leftJoin('authors', 'authors.id', '=', 'ebooks.author_id')
+                ->select('users.name as user_name', 'categories.name as cat_name', 'authors.name as author_name','ebooks.*')
+                ->where('ebooks.status', 1)
+                ->orderBy('ebooks.id', 'DESC')
+                ->get();
+        return response()->json($data, 200);
+    }
 
     public function detail($id)
     {
@@ -34,17 +45,29 @@ class EbookController extends Controller
     }
 
 
-    public function view()
+    public function getByUserId($id)
     {
         $data = EbookModel::leftJoin('users', 'users.id', '=', 'ebooks.user_id')
                 ->leftJoin('categories', 'categories.id', '=', 'ebooks.category_id')
                 ->leftJoin('authors', 'authors.id', '=', 'ebooks.author_id')
                 ->select('users.name as user_name', 'categories.name as cat_name', 'authors.name as author_name','ebooks.*')
-                ->where('ebooks.status', 1)
+                ->where('ebooks.user_id', $id)
                 ->orderBy('ebooks.id', 'DESC')
                 ->get();
         return response()->json($data, 200);
     }
+
+    public function approve($id)
+    {
+        $data = EbookModel::where('id', $id)->update(['status' => 1]);
+        return response()->json(["message" => "Approve successful."], 201);
+    }
+    public function reject($id)
+    {
+        $data = EbookModel::where('id', $id)->update(['status' => 2]);
+        return response()->json(["message" => "Rejected successful."], 201);
+    }
+
 
 
     public function store(Request $request)

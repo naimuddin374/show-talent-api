@@ -22,6 +22,23 @@ class ReviewController extends Controller
         return response()->json($data, 200);
     }
 
+    public function getByUserId($id)
+    {
+        $data = ReviewModel::where('ebook_id', $id)->orderBy('id', 'DESC')->get();
+        return response()->json($data, 200);
+    }
+
+    public function approve($id)
+    {
+        $data = ReviewModel::where('id', $id)->update(['status' => 1]);
+        return response()->json(["message" => "Approve successful."], 201);
+    }
+    public function reject($id)
+    {
+        $data = ReviewModel::where('id', $id)->update(['status' => 2]);
+        return response()->json(["message" => "Rejected successful."], 201);
+    }
+
 
     public function store(Request $request)
     {

@@ -23,6 +23,12 @@ class PageController extends Controller
         return response()->json($data, 200);
     }
 
+    public function getByUserId()
+    {
+        $data = PageModel::where('user_id', $id)->orderBy('id', 'DESC')->get();
+        return response()->json($data, 200);
+    }
+
 
     public function store(Request $request)
     {

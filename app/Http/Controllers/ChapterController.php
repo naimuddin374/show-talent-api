@@ -22,6 +22,23 @@ class ChapterController extends Controller
         return response()->json($data, 200);
     }
 
+    public function getByUserId($id)
+    {
+        $data = ChapterModel::where('ebook_id', $id)->orderBy('id', 'DESC')->get();
+        return response()->json($data, 200);
+    }
+
+    public function approve($id)
+    {
+        $data = ChapterModel::where('id', $id)->update(['status' => 1]);
+        return response()->json(["message" => "Approve successful."], 201);
+    }
+    public function reject($id)
+    {
+        $data = ChapterModel::where('id', $id)->update(['status' => 2]);
+        return response()->json(["message" => "Rejected successful."], 201);
+    }
+
 
     public function store(Request $request)
     {
@@ -30,6 +47,7 @@ class ChapterController extends Controller
             'ebook_id' => 'required|numeric',
             'sequence' => 'required|numeric',
             'status' => 'required|numeric',
+            'book' => 'required',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 406);
@@ -38,6 +56,7 @@ class ChapterController extends Controller
             "ebook_id" => $post['ebook_id'],
             "sequence" => $post['sequence'],
             "status" => $post['status'],
+            "book" => $post['book'],
         ];
 
 
@@ -62,6 +81,7 @@ class ChapterController extends Controller
             "ebook_id" => $post['ebook_id'],
             "sequence" => $post['sequence'],
             "status" => $post['status'],
+            "book" => $post['book'],
             "reject_note" => $post['reject_note'],
             "reopen_note" => $post['reopen_note'],
         ];

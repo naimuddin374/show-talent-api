@@ -8,6 +8,9 @@ use App\PostModel;
 use File;
 
 
+// auth()->user()
+
+
 class PostController extends Controller
 {
     public function adminView()
@@ -30,15 +33,22 @@ class PostController extends Controller
         return response()->json($data, 200);
     }
 
+
+    public function getByUserId($id)
+    {
+        $data = PostModel::leftJoin('users', 'users.id', '=', 'posts.user_id')->select('users.name as user_name','posts.*')->where('users.id', $id)->orderBy('posts.id', 'DESC')->get();
+        return response()->json($data, 200);
+    }
+
     public function approve($id)
     {
-        $data = PostModel::update('status', 1)->where('id', $id);
-        return response()->json($data, 201);
+        $data = PostModel::where('id', $id)->update(['status' => 1]);
+        return response()->json(["message" => "Approve successful."], 201);
     }
     public function reject($id)
     {
-        $data = PostModel::update('status', 2)->where('id', $id);
-        return response()->json($data, 201);
+        $data = PostModel::where('id', $id)->update(['status' => 2]);
+        return response()->json(["message" => "Rejected successful."], 201);
     }
 
 

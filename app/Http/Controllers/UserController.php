@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\UserModel;
+use App\UserInfoModel;
 use File;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -30,28 +32,32 @@ class UserController extends Controller
     }
 
 
-
     public function store(Request $request)
     {
         $post = $request->all();
+        $user = UserModel::where('email', $post['email'])->get();
+        if(isset($user[0])){
+            return response()->json(['message' => 'This email already exist!'], 406);
+        }
         $validator = Validator::make($post, [
             'full_name' => 'required|string',
-            'email' => 'required|string',
+            'email' => 'required|unique:users',
             'password' => 'required|string',
         ]);
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 406);
+            return response()->json(['validation' => $validator->errors(), 'message' => 'Validation Error!'], 406);
         }
         $data = [
             "full_name" => $post['full_name'],
             "name" => $post['name'],
             "contact" => $post['contact'],
             "email" => $post['email'],
-            "password" => md5($post['password']),
+            "password" => Hash::make($post['password']),
             "type" => $post['type'],
             "status" => $post['status'],
         ];
-        UserModel::create($data)->id;
+        $id = UserModel::create($data)->id;
+        UserInfoModel::create(['user_id' => $id, 'dob' => $post['dob']])->id;
         return response()->json(["message" => "Created successful."], 201);
     }
 

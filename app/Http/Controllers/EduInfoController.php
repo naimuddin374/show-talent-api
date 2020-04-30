@@ -23,6 +23,13 @@ class EduInfoController extends Controller
     }
 
 
+    public function getByUserId($id)
+    {
+        $data = EduInfoModel::where('user_id', $id)->orderBy('id', 'DESC')->get();
+        return response()->json($data, 200);
+    }
+
+
     public function store(Request $request)
     {
         $post = $request->all();

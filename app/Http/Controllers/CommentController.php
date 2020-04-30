@@ -11,15 +11,47 @@ class CommentController extends Controller
 {
     public function adminView()
     {
-        $data = CommentModel::orderBy('id', 'DESC')->get();
+        $data = CommentModel::leftJoin('users', 'users.id', '=', 'comments.user_id')
+                ->leftJoin('posts', 'posts.id', '=', 'comments.post_id')
+                ->select('users.name as user_name', 'posts.title as post_title', 'comments.*')
+                ->orderBy('comments.id', 'DESC')
+                ->get();
         return response()->json($data, 200);
     }
 
 
     public function view()
     {
-        $data = CommentModel::where('status', 1)->orderBy('id', 'DESC')->get();
+        $data = CommentModel::leftJoin('users', 'users.id', '=', 'comments.user_id')
+                ->leftJoin('posts', 'posts.id', '=', 'comments.post_id')
+                ->select('users.name as user_name', 'posts.title as post_title', 'comments.*')
+                ->orderBy('comments.id', 'DESC')
+                ->where('comments.status', 1)
+                ->get();
         return response()->json($data, 200);
+    }
+
+    public function getByUserId($id)
+    {
+        $data = CommentModel::leftJoin('users', 'users.id', '=', 'comments.user_id')
+                ->leftJoin('posts', 'posts.id', '=', 'comments.post_id')
+                ->select('users.name as user_name', 'posts.title as post_title', 'comments.*')
+                ->orderBy('comments.id', 'DESC')
+                ->where('comments.post_id', $id)
+                ->get();
+        return response()->json($data, 200);
+    }
+
+
+    public function approve($id)
+    {
+        $data = CommentModel::where('id', $id)->update(['status' => 1]);
+        return response()->json(["message" => "Approve successful."], 201);
+    }
+    public function reject($id)
+    {
+        $data = CommentModel::where('id', $id)->update(['status' => 2]);
+        return response()->json(["message" => "Rejected successful."], 201);
     }
 
 

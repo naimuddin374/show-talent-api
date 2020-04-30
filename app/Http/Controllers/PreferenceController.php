@@ -22,6 +22,12 @@ class PreferenceController extends Controller
         return response()->json($data, 200);
     }
 
+    public function getByUserId($id)
+    {
+        $data = PreferenceModel::where('user_id', $id)->orderBy('id', 'DESC')->get();
+        return response()->json($data, 200);
+    }
+
 
     public function store(Request $request)
     {
