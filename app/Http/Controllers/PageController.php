@@ -23,7 +23,7 @@ class PageController extends Controller
         return response()->json($data, 200);
     }
 
-    public function getByUserId()
+    public function viewByJoinId($id)
     {
         $data = PageModel::where('user_id', $id)->orderBy('id', 'DESC')->get();
         return response()->json($data, 200);

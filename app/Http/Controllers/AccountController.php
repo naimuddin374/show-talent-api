@@ -29,7 +29,7 @@ class AccountController extends Controller
         return response()->json($data, 200);
     }
 
-    public function getByUserId($id)
+    public function viewByJoinId($id)
     {
         $data = AccountModel::leftJoin('users', 'users.id', '=', 'accounts.user_id')->select('users.name as user_name','accounts.*')->where('users.id', $id)->orderBy('accounts.id', 'DESC')->get();
         return response()->json($data, 200);

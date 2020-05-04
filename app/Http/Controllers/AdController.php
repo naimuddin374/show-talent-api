@@ -31,7 +31,7 @@ class AdController extends Controller
         return response()->json($data, 200);
     }
 
-    public function getByUserId($id)
+    public function viewByJoinId($id)
     {
         $data = AdModel::leftJoin('users', 'users.id', '=', 'ads.user_id')
                 ->select('users.name as user_name','ads.*')

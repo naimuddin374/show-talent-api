@@ -23,7 +23,7 @@ class UserInfoController extends Controller
     }
 
 
-    public function getByUserId($id)
+    public function viewByJoinId($id)
     {
         $data = UserInfoModel::where('user_id', $id)->orderBy('id', 'DESC')->get();
         return response()->json($data, 200);

@@ -17,7 +17,7 @@ class CityController extends Controller
 
     public function view()
     {
-        $data = CityModel::where('status', 1)->orderBy('id', 'DESC')->get();
+        $data = CityModel::where('status', 1)->orderBy('name', 'ASC')->get();
         return response()->json($data, 200);
     }
 

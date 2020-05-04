@@ -22,40 +22,23 @@ class PreferenceController extends Controller
         return response()->json($data, 200);
     }
 
-    public function getByUserId($id)
+    public function viewByJoinId($id)
     {
-        $data = PreferenceModel::where('user_id', $id)->orderBy('id', 'DESC')->get();
+        // $data = PreferenceModel::select('category_id')->where('user_id', $id)->get();
+        $data = PreferenceModel::leftJoin('categories', 'categories.id', '=', 'preferences.category_id')->select('categories.name as cat_name','preferences.*')->where('preferences.user_id', $id)->orderBy('preferences.id', 'DESC')->get();
         return response()->json($data, 200);
-    }
-
-
-    public function store(Request $request)
-    {
-        $post = $request->all();
-        $validator = Validator::make($post, [
-            'user_id' => 'required|numeric',
-            'category_id' => 'required',
-        ]);
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 406);
-        }
-        $data = [
-            "user_id" => $post['user_id'],
-            "category_id" => $post['category_id'],
-        ];
-        PreferenceModel::create($data)->id;
-        return response()->json(["message" => "Created successful."], 201);
     }
 
 
     public function update(Request $request, $id)
     {
         $post = $request->all();
-        $data = [
-            "category_id" => $post['category_id'],
-        ];
-        $row = PreferenceModel::findOrFail($id);
-        $row->update($data);
+
+        PreferenceModel::where(['user_id' => $id])->delete();
+
+        foreach($post['category_id'] as $item){
+            PreferenceModel::create(['user_id' => $id, 'category_id' => $item]);
+        }
         return response()->json(["message" => "Updated successful."], 201);
     }
 

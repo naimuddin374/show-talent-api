@@ -14,6 +14,7 @@ use App\User;
 
 class AuthController extends Controller
 {
+
     public function authenticate(Request $request)
     {
         $credentials = $request->all();
@@ -22,6 +23,7 @@ class AuthController extends Controller
             return response()->json(["message" => "Invalid Credentials."], 401);
         }else{
             $customClaims = [
+                'id' => $user->id,
                 'full_name' => $user->full_name,
                 'name' => $user->name,
                 'contact' => $user->contact,
@@ -37,6 +39,28 @@ class AuthController extends Controller
             }else{
                 return response()->json(["message" => "Login Successful.", 'token' => 'Bearer '.$token], 200);
             }
+        }
+    }
+
+    public function refreshToken(){
+        $auth = auth()->user();
+        $user = User::where(['id' => $auth['id']])->first();
+        $customClaims = [
+            'id' => $user->id,
+            'full_name' => $user->full_name,
+            'name' => $user->name,
+            'contact' => $user->contact,
+            'email' => $user->email,
+            'image' => $user->image,
+            'type' => $user->type,
+            'status' => $user->status,
+            'balance' => $user->balance,
+        ];
+        $token = JWTAuth::claims($customClaims)->fromUser($user);
+        if(!$token){
+            return response()->json(["message" => "Authentication Field!"], 401);
+        }else{
+            return response()->json(["message" => "Login Successful.", 'token' => 'Bearer '.$token], 200);
         }
     }
 

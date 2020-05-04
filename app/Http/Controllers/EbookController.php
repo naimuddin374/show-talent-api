@@ -45,7 +45,7 @@ class EbookController extends Controller
     }
 
 
-    public function getByUserId($id)
+    public function viewByJoinId($id)
     {
         $data = EbookModel::leftJoin('users', 'users.id', '=', 'ebooks.user_id')
                 ->leftJoin('categories', 'categories.id', '=', 'ebooks.category_id')

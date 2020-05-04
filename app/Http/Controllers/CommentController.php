@@ -31,7 +31,7 @@ class CommentController extends Controller
         return response()->json($data, 200);
     }
 
-    public function getByUserId($id)
+    public function viewByJoinId($id)
     {
         $data = CommentModel::leftJoin('users', 'users.id', '=', 'comments.user_id')
                 ->leftJoin('posts', 'posts.id', '=', 'comments.post_id')

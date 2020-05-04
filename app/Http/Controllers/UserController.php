@@ -57,8 +57,12 @@ class UserController extends Controller
             "status" => $post['status'],
         ];
         $id = UserModel::create($data)->id;
-        UserInfoModel::create(['user_id' => $id, 'dob' => $post['dob']])->id;
-        return response()->json(["message" => "Created successful."], 201);
+        $result = UserInfoModel::create(['user_id' => $id, 'dob' => $post['dob']])->id;
+        if($result){
+            return response()->json(["message" => "Created successful."], 201);
+        } else{
+            return response()->json(["message" => "Server too busy."], 400);
+        }
     }
 
 

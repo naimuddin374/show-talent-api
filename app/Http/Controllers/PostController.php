@@ -34,7 +34,7 @@ class PostController extends Controller
     }
 
 
-    public function getByUserId($id)
+    public function viewByJoinId($id)
     {
         $data = PostModel::leftJoin('users', 'users.id', '=', 'posts.user_id')->select('users.name as user_name','posts.*')->where('users.id', $id)->orderBy('posts.id', 'DESC')->get();
         return response()->json($data, 200);
