@@ -6,6 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class AuthorModel extends Model
 {
-    protected $table = "authors";
-    protected $fillable = ["name", "bio"];
+    protected $table = 'authors';
+    protected $fillable = ['name', 'bio'];
 }

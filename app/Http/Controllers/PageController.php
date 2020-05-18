@@ -19,13 +19,28 @@ class PageController extends Controller
 
     public function view()
     {
-        $data = PageModel::where('status', 1)->orderBy('id', 'DESC')->get();
+        $data = PageModel::leftJoin('categories', 'pages.category_id', '=', 'categories.id')
+                ->where('pages.status', 1)
+                ->orderBy('pages.id', 'DESC')
+                ->select('categories.name as cat_name','pages.*')
+                ->get();
+        return response()->json($data, 200);
+    }
+
+    public function detail($id)
+    {
+        $data = PageModel::where('id', $id)->orderBy('id', 'DESC')->first();
         return response()->json($data, 200);
     }
 
     public function viewByJoinId($id)
     {
-        $data = PageModel::where('user_id', $id)->orderBy('id', 'DESC')->get();
+        $data = PageModel::leftJoin('categories', 'pages.category_id', '=', 'categories.id')
+                ->where(['pages.user_id' => $id])
+                // ->where(['pages.status' => 1, 'pages.user_id' => $id])
+                ->orderBy('pages.id', 'DESC')
+                ->select('categories.name as cat_name','pages.*')
+                ->get();
         return response()->json($data, 200);
     }
 
@@ -34,33 +49,31 @@ class PageController extends Controller
     {
         $post = $request->all();
         $validator = Validator::make($post, [
-            'user_id' => 'required',
             'name' => 'required',
-            'status' => 'required|numeric',
+            'email' => 'required',
+            'contact' => 'required',
+            'category_id' => 'required',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 406);
         }
+        $auth = auth()->user();
         $data = [
-            "status" => $post['status'],
-            "user_id" => $post['user_id'],
+            "user_id" => $auth['id'],
             "name" => $post['name'],
             "email" => $post['email'],
             "contact" => $post['contact'],
-            "creation_date" => $post['creation_date'],
-            "expiration_date" => $post['expiration_date'],
+            "category_id" => $post['category_id'],
+            "bio" => $post['bio'],
         ];
-
 
         if(@$post['image'])
         {
             $image = $post['image'];
             $name = time().'.' . explode('/', explode(':', substr($image, 0, strpos($image, ';')))[1])[1];
-            \Image::make($image)->save(storage_path('app/public/images/').$name);
-            $data['image'] = 'storage/images/'.$name;
+            \Image::make($image)->save('images/'.$name);
+            $imgFile = 'images/'.$name;
         }
-
-
         PageModel::create($data)->id;
         return response()->json(["message" => "Created successful."], 201);
     }
@@ -74,28 +87,32 @@ class PageController extends Controller
             "name" => $post['name'],
             "email" => $post['email'],
             "contact" => $post['contact'],
-            "creation_date" => $post['creation_date'],
-            "expiration_date" => $post['expiration_date'],
+            "category_id" => $post['category_id'],
+            "bio" => $post['bio'],
         ];
 
         $row = PageModel::findOrFail($id);
+        $row->update($data);
+        return response()->json(["message" => "Updated successful."], 201);
+    }
 
-
+    public function updatePhoto(Request $request, $id)
+    {
+        $post = $request->all();
+        $row = PageModel::findOrFail($id);
         if(@$post['image'])
         {
             $image = $post['image'];
             $name = time().'.' . explode('/', explode(':', substr($image, 0, strpos($image, ';')))[1])[1];
-            \Image::make($image)->save(storage_path('app/public/images/').$name);
-            $data['image'] = 'storage/images/'.$name;
+            \Image::make($image)->save('images/'.$name);
+            $imgFile = 'images/'.$name;
         }
         $image_path = $row->image;
-        if(File::exists($image_path) && @$data['image'])
+        if(File::exists($image_path) && @$imgFile)
         {
             File::delete($image_path);
         }
-
-
-        $row->update($data);
+        $row->update(['image' => $imgFile]);
         return response()->json(["message" => "Updated successful."], 201);
     }
 

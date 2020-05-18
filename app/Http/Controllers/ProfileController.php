@@ -61,7 +61,8 @@ class ProfileController extends Controller
         $post = $request->all();
         $image = $post['image'];
         $name = time().'.' . explode('/', explode(':', substr($image, 0, strpos($image, ';')))[1])[1];
-        \Image::make($image)->save(public_path('images/').$name);
+        // \Image::make($image)->save(public_path('images/').$name);
+        \Image::make($image)->save('images/'.$name);
         $imgFile = 'images/'.$name;
 
         $auth = auth()->user();
@@ -73,7 +74,7 @@ class ProfileController extends Controller
             File::delete($image_path);
         }
         $row->update(['image' => $imgFile]);
-        return response()->json(["message" => "Updated successful."], 201);
+        return response()->json(["message" => "Updated successful.", 'image' => $imgFile], 201);
     }
 
 }

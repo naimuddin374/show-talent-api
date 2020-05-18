@@ -48,6 +48,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
         Route::get("admin/$key", "$value@adminView");
         Route::post("{$key}", "$value@store");
         Route::put("{$key}/{id}", "$value@update");
+        Route::put("{$key}/update/photo/{id}", "$value@updatePhoto");
         Route::delete("{$key}/{id}", "$value@delete");
         Route::put("{$key}/approve/{id}", "$value@approve");
         Route::put("{$key}/reject/{id}", "$value@reject");

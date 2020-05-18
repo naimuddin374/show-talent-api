@@ -25,7 +25,7 @@ class WorkExpController extends Controller
 
     public function viewByJoinId($id)
     {
-        $data = WorkExpModel::where('user_id', $id)->orderBy('id', 'DESC')->get();
+        $data = WorkExpModel::where('user_id', $id)->orderBy('start_date', 'DESC')->get();
         return response()->json($data, 200);
     }
 
@@ -49,6 +49,9 @@ class WorkExpController extends Controller
             "end_date" => $post['end_date'],
             "status" => $post['status'],
         ];
+        if(!$post['end_date']){
+            $data['status'] = 2;
+        }
         WorkExpModel::create($data)->id;
         return response()->json(["message" => "Created successful."], 201);
     }
@@ -64,6 +67,9 @@ class WorkExpController extends Controller
             "end_date" => $post['end_date'],
             "status" => $post['status'],
         ];
+        if(!$post['end_date']){
+            $data['status'] = 2;
+        }
         $row = WorkExpModel::findOrFail($id);
         $row->update($data);
         return response()->json(["message" => "Updated successful."], 201);

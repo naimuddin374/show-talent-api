@@ -68,7 +68,6 @@ class PostController extends Controller
     {
         $post = $request->all();
         $validator = Validator::make($post, [
-            'user_id' => 'required',
             'type' => 'required|numeric',
             'category_id' => 'required|numeric',
             'status' => 'required|numeric',
@@ -76,9 +75,10 @@ class PostController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 406);
         }
+        $auth = auth()->user();
         $data = [
             "status" => $post['status'],
-            "user_id" => $post['user_id'],
+            "user_id" => $auth['id'],
             "type" => $post['type'],
             "category_id" => $post['category_id'],
             "page_id" => $post['page_id'],
