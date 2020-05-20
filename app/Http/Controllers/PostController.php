@@ -29,7 +29,7 @@ class PostController extends Controller
 
     public function detail($id)
     {
-        $data = PostModel::leftJoin('users', 'users.id', '=', 'posts.user_id')->select('users.name as user_name','posts.*')->where('posts.id', $id)->orderBy('posts.id', 'DESC')->get();
+        $data = PostModel::leftJoin('users', 'users.id', '=', 'posts.user_id')->select('users.name as user_name','posts.*')->where('posts.id', $id)->orderBy('posts.id', 'DESC')->first();
         return response()->json($data, 200);
     }
 

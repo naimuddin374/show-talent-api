@@ -22,6 +22,13 @@ class ReviewController extends Controller
         return response()->json($data, 200);
     }
 
+
+    public function detail($id)
+    {
+        $data = ReviewModel::where('id', $id)->first();
+        return response()->json($data, 200);
+    }
+
     public function viewByJoinId($id)
     {
         $data = ReviewModel::where('ebook_id', $id)->orderBy('id', 'DESC')->get();

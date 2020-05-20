@@ -24,7 +24,7 @@ class CategoryController extends Controller
 
     public function detail($id)
     {
-        $data = CategoryModel::where('id', $id)->get();
+        $data = CategoryModel::where('id', $id)->first();
         return response()->json($data, 200);
     }
 

@@ -22,6 +22,13 @@ class ChapterController extends Controller
         return response()->json($data, 200);
     }
 
+
+    public function detail($id)
+    {
+        $data = ChapterModel::where('id', $id)->first();
+        return response()->json($data, 200);
+    }
+
     public function viewByJoinId($id)
     {
         $data = ChapterModel::where('ebook_id', $id)->orderBy('id', 'DESC')->get();

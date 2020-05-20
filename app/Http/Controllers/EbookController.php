@@ -39,8 +39,7 @@ class EbookController extends Controller
                 ->leftJoin('authors', 'authors.id', '=', 'ebooks.author_id')
                 ->select('users.name as user_name', 'categories.name as cat_name', 'authors.name as author_name','ebooks.*')
                 ->where('ebooks.id', $id)
-                ->orderBy('ebooks.id', 'DESC')
-                ->get();
+                ->first();
         return response()->json($data, 200);
     }
 

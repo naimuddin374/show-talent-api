@@ -22,6 +22,13 @@ class CityController extends Controller
     }
 
 
+    public function detail($id)
+    {
+        $data = CityModel::where('id', $id)->first();
+        return response()->json($data, 200);
+    }
+
+
     public function store(Request $request)
     {
         $post = $request->all();

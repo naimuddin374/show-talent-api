@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\PageModel;
+use App\FollowerModel;
 use File;
 
 
@@ -29,8 +30,10 @@ class PageController extends Controller
 
     public function detail($id)
     {
-        $data = PageModel::where('id', $id)->orderBy('id', 'DESC')->first();
-        return response()->json($data, 200);
+        $following = FollowerModel::where(['user_id' => $id, 'is_page' => 1])->count();
+        $followers = FollowerModel::where(['profile_id' => $id, 'is_page' => 1])->count();
+        $data = PageModel::where('id', $id)->first();
+        return response()->json(['pageInfo' => $data, 'following' => $following, 'followers' => $followers], 200);
     }
 
     public function viewByJoinId($id)

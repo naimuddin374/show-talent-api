@@ -25,9 +25,8 @@ class AdController extends Controller
     {
         $data = AdModel::leftJoin('users', 'users.id', '=', 'ads.user_id')
                 ->select('users.name as user_name','ads.*')
-                ->orderBy('ads.id', 'DESC')
                 ->where('ads.id',$id)
-                ->get();
+                ->first();
         return response()->json($data, 200);
     }
 

@@ -22,6 +22,12 @@ class UserInfoController extends Controller
         return response()->json($data, 200);
     }
 
+    public function detail($id)
+    {
+        $data = UserInfoModel::where('id', $id)->first();
+        return response()->json($data, 200);
+    }
+
 
     public function viewByJoinId($id)
     {

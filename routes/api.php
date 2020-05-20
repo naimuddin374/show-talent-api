@@ -40,6 +40,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
         'posted-ad' => 'AdController',
         'account' => 'AccountController',
         'profile' => 'ProfileController',
+        'followers' => 'FollowerController',
     ];
    foreach ($arr as $key => $value) {
         Route::get("$key", "$value@view");
@@ -58,6 +59,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get("auth/user/info", "ProfileController@getAuthUserInfo");
     Route::post("profile/photo/update", "ProfileController@updateProfilePhoto");
     Route::get("auth/token/refresh", "AuthController@refreshToken");
+    Route::get("following/follower/{id}/{isPage}", "FollowerController@gerFollowerFollowing");
 });
 
 

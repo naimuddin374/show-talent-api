@@ -25,6 +25,13 @@ class ProfileController extends Controller
         return response()->json($data, 200);
     }
 
+    public function detail($id)
+    {
+        $data = UserModel::where('id', $id)->first();
+        return response()->json($data, 200);
+    }
+
+
     public function viewByJoinId($id)
     {
         $data = UserModel::where('user_id', $id)->orderBy('id', 'DESC')->get();

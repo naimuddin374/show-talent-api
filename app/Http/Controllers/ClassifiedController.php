@@ -21,6 +21,12 @@ class ClassifiedController extends Controller
         return response()->json($data, 200);
     }
 
+    public function detail($id)
+    {
+        $data = ClassifiedModel::where('id', $id)->orderBy('id', 'DESC')->first();
+        return response()->json($data, 200);
+    }
+
     public function viewByJoinId($id)
     {
         $data = ClassifiedModel::where('user_id', $id)->orderBy('id', 'DESC')->get();

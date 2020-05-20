@@ -25,7 +25,7 @@ class AccountController extends Controller
 
     public function detail($id)
     {
-        $data = AccountModel::leftJoin('users', 'users.id', '=', 'accounts.user_id')->select('users.name as user_name','accounts.*')->where('accounts.id', $id)->orderBy('accounts.id', 'DESC')->get();
+        $data = AccountModel::leftJoin('users', 'users.id', '=', 'accounts.user_id')->select('users.name as user_name','accounts.*')->where('accounts.id', $id)->first();
         return response()->json($data, 200);
     }
 

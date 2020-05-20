@@ -22,6 +22,12 @@ class EduInfoController extends Controller
         return response()->json($data, 200);
     }
 
+    public function detail($id)
+    {
+        $data = EduInfoModel::where('id', $id)->first();
+        return response()->json($data, 200);
+    }
+
     public function viewByJoinId($id)
     {
         $data = EduInfoModel::where('user_id', $id)->orderBy('passing_year', 'DESC')->get();

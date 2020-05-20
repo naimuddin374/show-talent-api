@@ -22,9 +22,15 @@ class PreferenceController extends Controller
         return response()->json($data, 200);
     }
 
+    public function detail($id)
+    {
+        $data = PreferenceModel::where('id', $id)->first();
+        return response()->json($data, 200);
+    }
+
+
     public function viewByJoinId($id)
     {
-        // $data = PreferenceModel::select('category_id')->where('user_id', $id)->get();
         $data = PreferenceModel::leftJoin('categories', 'categories.id', '=', 'preferences.category_id')->select('categories.name as cat_name','preferences.*')->where('preferences.user_id', $id)->orderBy('preferences.id', 'DESC')->get();
         return response()->json($data, 200);
     }
