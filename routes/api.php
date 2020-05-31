@@ -55,6 +55,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
         Route::put("{$key}/reject/{id}", "$value@reject");
     }
     Route::get("admin/get-post/{type}", "PostController@postShowByType");
+    Route::get("page/post/{type}", "PostController@getPagePost");
 
     Route::get("auth/user/info", "ProfileController@getAuthUserInfo");
     Route::post("profile/photo/update", "ProfileController@updateProfilePhoto");
@@ -67,3 +68,4 @@ Route::group(['middleware' => ['jwt.verify']], function() {
 
 Route::post("auth/registration", "UserController@store");
 Route::post("auth/login", "AuthController@authenticate");
+Route::get("test", "CategoryController@test");

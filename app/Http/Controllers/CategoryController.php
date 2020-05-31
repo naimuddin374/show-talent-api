@@ -15,6 +15,12 @@ class CategoryController extends Controller
         return response()->json($data, 200);
     }
 
+    public function test()
+    {
+        $data = CategoryModel::orderBy('id', 'DESC')->get();
+        return response()->json($data, 200);
+    }
+
 
     public function view()
     {

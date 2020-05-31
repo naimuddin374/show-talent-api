@@ -36,7 +36,13 @@ class PostController extends Controller
 
     public function viewByJoinId($id)
     {
-        $data = PostModel::leftJoin('users', 'users.id', '=', 'posts.user_id')->select('users.name as user_name','posts.*')->where('users.id', $id)->orderBy('posts.id', 'DESC')->get();
+        $data = PostModel::leftJoin('users', 'users.id', '=', 'posts.user_id')->leftJoin('categories', 'categories.id', '=', 'posts.category_id')->select('users.name as user_name', 'categories.name as category_name','posts.*')->where(['users.id'=> $id, 'page_id' => 0])->orderBy('posts.id', 'DESC')->get();
+        return response()->json($data, 200);
+    }
+
+    public function getPagePost($id)
+    {
+        $data = PostModel::leftJoin('pages', 'pages.id', '=', 'posts.page_id')->leftJoin('categories', 'categories.id', '=', 'posts.category_id')->select('pages.name as user_name', 'categories.name as category_name','posts.*')->where('pages.id', $id)->orderBy('posts.id', 'DESC')->get();
         return response()->json($data, 200);
     }
 
@@ -85,21 +91,19 @@ class PostController extends Controller
             "title" => $post['title'],
             "description" => $post['description'],
             "newslink" => $post['newslink'],
-            "video" => $post['video'],
+            "video" => strip_tags($post['video']),
         ];
-
 
         if(@$post['image'])
         {
             $image = $post['image'];
             $name = time().'.' . explode('/', explode(':', substr($image, 0, strpos($image, ';')))[1])[1];
-            \Image::make($image)->save(storage_path('app/public/images/').$name);
-            $data['image'] = 'storage/images/'.$name;
+            \Image::make($image)->save('images/'.$name);
+            $data['image'] = 'images/'.$name;
         }
 
-
-        PostModel::create($data)->id;
-        return response()->json(["message" => "Created successful."], 201);
+        PostModel::create($data);
+        return response()->json(["message" => "Created successful.", 'post'=> $data], 201);
     }
 
 
