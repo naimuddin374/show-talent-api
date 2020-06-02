@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\PostModel;
+use App\PostLikeModel;
 use File;
 
 
@@ -15,34 +16,37 @@ class PostController extends Controller
 {
     public function adminView()
     {
-        $data = PostModel::leftJoin('users', 'users.id', '=', 'posts.user_id')->select('users.name as user_name','posts.*')->orderBy('posts.id', 'DESC')->get();
+        $data = PostModel::with(['user', 'category', 'page', 'likes'])->get();
         return response()->json($data, 200);
     }
 
 
     public function view()
     {
-        $data = PostModel::leftJoin('users', 'users.id', '=', 'posts.user_id')->select('users.name as user_name','posts.*')->orderBy('posts.id', 'DESC')->get();
+        $data = PostModel::with(['user', 'category', 'page', 'likes'])->get();
         return response()->json($data, 200);
     }
 
 
     public function detail($id)
     {
-        $data = PostModel::leftJoin('users', 'users.id', '=', 'posts.user_id')->select('users.name as user_name','posts.*')->where('posts.id', $id)->orderBy('posts.id', 'DESC')->first();
+        $data = PostModel::with(['user', 'category', 'page', 'likes'])->where(['id'=> $id])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
 
     public function viewByJoinId($id)
     {
-        $data = PostModel::leftJoin('users', 'users.id', '=', 'posts.user_id')->leftJoin('categories', 'categories.id', '=', 'posts.category_id')->select('users.name as user_name', 'categories.name as category_name','posts.*')->where(['users.id'=> $id, 'page_id' => 0])->orderBy('posts.id', 'DESC')->get();
+        $data = PostModel::with(['user', 'category', 'page', 'likes'])->where(['user_id'=> $id, 'page_id' => 0])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
     public function getPagePost($id)
     {
-        $data = PostModel::leftJoin('pages', 'pages.id', '=', 'posts.page_id')->leftJoin('categories', 'categories.id', '=', 'posts.category_id')->select('pages.name as user_name', 'categories.name as category_name','posts.*')->where('pages.id', $id)->orderBy('posts.id', 'DESC')->get();
+        $data = PostModel::with(['user', 'category', 'page', 'likes'])
+                ->where(['posts.page_id' => $id])
+                ->orderBy('id', 'desc')
+                ->get();
         return response()->json($data, 200);
     }
 
@@ -94,7 +98,7 @@ class PostController extends Controller
             "video" => strip_tags($post['video']),
         ];
 
-        if(@$post['image'])
+       if(@$post['image'])
         {
             $image = $post['image'];
             $name = time().'.' . explode('/', explode(':', substr($image, 0, strpos($image, ';')))[1])[1];
@@ -127,8 +131,8 @@ class PostController extends Controller
         {
             $image = $post['image'];
             $name = time().'.' . explode('/', explode(':', substr($image, 0, strpos($image, ';')))[1])[1];
-            \Image::make($image)->save(storage_path('app/public/images/').$name);
-            $data['image'] = 'storage/images/'.$name;
+            \Image::make($image)->save('images/'.$name);
+            $data['image'] = 'images/'.$name;
         }
         $image_path = $row->image;
         if(File::exists($image_path) && @$data['image'])
@@ -145,6 +149,13 @@ class PostController extends Controller
     public function delete($id)
     {
         $row = PostModel::findOrFail($id);
+
+        $image_path = $row->image;
+        if(File::exists($image_path))
+        {
+            File::delete($image_path);
+        }
+
         $row->delete();
         return response()->json(["message" => "Deleted successful."], 201);
     }

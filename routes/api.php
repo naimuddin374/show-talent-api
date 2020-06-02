@@ -41,6 +41,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
         'account' => 'AccountController',
         'profile' => 'ProfileController',
         'followers' => 'FollowerController',
+        'post-like' => 'PostLikeController',
     ];
    foreach ($arr as $key => $value) {
         Route::get("$key", "$value@view");
@@ -68,4 +69,5 @@ Route::group(['middleware' => ['jwt.verify']], function() {
 
 Route::post("auth/registration", "UserController@store");
 Route::post("auth/login", "AuthController@authenticate");
-Route::get("test", "CategoryController@test");
+// Route::get("test", "CategoryController@test");
+Route::get("test", "TestController@index");
