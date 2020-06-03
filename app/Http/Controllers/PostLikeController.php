@@ -30,6 +30,13 @@ class PostLikeController extends Controller
     }
 
 
+    public function viewByJoinId($id)
+    {
+        $data = PostLikeModel::where('post_id', $id)->get();
+        return response()->json($data, 200);
+    }
+
+
     public function store(Request $request)
     {
         $post = $request->all();
