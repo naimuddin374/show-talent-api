@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\CommentModel;
+use App\PostCommentModel;
 
 
-class CommentController extends Controller
+class PostCommentController extends Controller
 {
     public function adminView()
     {
-        $data = CommentModel::leftJoin('users', 'users.id', '=', 'comments.user_id')
+        $data = PostCommentModel::leftJoin('users', 'users.id', '=', 'comments.user_id')
                 ->leftJoin('posts', 'posts.id', '=', 'comments.post_id')
                 ->select('users.name as user_name', 'posts.title as post_title', 'comments.*')
                 ->orderBy('comments.id', 'DESC')
@@ -22,7 +22,7 @@ class CommentController extends Controller
 
     public function view()
     {
-        $data = CommentModel::leftJoin('users', 'users.id', '=', 'comments.user_id')
+        $data = PostCommentModel::leftJoin('users', 'users.id', '=', 'comments.user_id')
                 ->leftJoin('posts', 'posts.id', '=', 'comments.post_id')
                 ->select('users.name as user_name', 'posts.title as post_title', 'comments.*')
                 ->orderBy('comments.id', 'DESC')
@@ -33,19 +33,20 @@ class CommentController extends Controller
 
     public function viewByJoinId($id)
     {
-        $data = CommentModel::where('post_id', $id)->get();
+        $data = PostCommentModel::with(['user'])->where(['post_id'=> $id])->get();
+        // $data = PostCommentModel::where('post_id', $id)->get();
         return response()->json($data, 200);
     }
 
 
     public function approve($id)
     {
-        $data = CommentModel::where('id', $id)->update(['status' => 1]);
+        $data = PostCommentModel::where('id', $id)->update(['status' => 1]);
         return response()->json(["message" => "Approve successful."], 201);
     }
     public function reject($id)
     {
-        $data = CommentModel::where('id', $id)->update(['status' => 2]);
+        $data = PostCommentModel::where('id', $id)->update(['status' => 2]);
         return response()->json(["message" => "Rejected successful."], 201);
     }
 
@@ -64,10 +65,10 @@ class CommentController extends Controller
             "user_id" => $post['user_id'],
             "post_id" => $post['post_id'],
             "status" => $post['status'],
-            "comment" => $post['comment'],
+            "comment" => strip_tags($post['comment']),
             "comment_id" => @$post['comment_id'],
         ];
-        CommentModel::create($data)->id;
+        PostCommentModel::create($data)->id;
         return response()->json(["message" => "Created successful."], 201);
     }
 
@@ -77,9 +78,9 @@ class CommentController extends Controller
         $post = $request->all();
         $data = [
             "status" => $post['status'],
-            "comment" => $post['comment'],
+            "comment" => strip_tags($post['comment']),
         ];
-        $row = CommentModel::findOrFail($id);
+        $row = PostCommentModel::findOrFail($id);
         $row->update($data);
         return response()->json(["message" => "Updated successful."], 201);
     }
@@ -87,7 +88,7 @@ class CommentController extends Controller
 
     public function delete($id)
     {
-        $row = CommentModel::findOrFail($id);
+        $row = PostCommentModel::findOrFail($id);
         $row->delete();
         return response()->json(["message" => "Deleted successful."], 201);
     }

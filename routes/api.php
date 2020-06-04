@@ -42,6 +42,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
         'profile' => 'ProfileController',
         'followers' => 'FollowerController',
         'post-like' => 'PostLikeController',
+        'post-comment' => 'PostCommentController',
     ];
    foreach ($arr as $key => $value) {
         Route::get("$key", "$value@view");

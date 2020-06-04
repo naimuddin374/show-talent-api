@@ -16,34 +16,34 @@ class PostController extends Controller
 {
     public function adminView()
     {
-        $data = PostModel::with(['user', 'category', 'page', 'likes'])->get();
+        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments'])->get();
         return response()->json($data, 200);
     }
 
 
     public function view()
     {
-        $data = PostModel::with(['user', 'category', 'page', 'likes'])->get();
+        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments'])->get();
         return response()->json($data, 200);
     }
 
 
     public function detail($id)
     {
-        $data = PostModel::with(['user', 'category', 'page', 'likes'])->where(['id'=> $id])->orderBy('id', 'desc')->get();
+        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments'])->where(['id'=> $id])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
 
     public function viewByJoinId($id)
     {
-        $data = PostModel::with(['user', 'category', 'page', 'likes'])->where(['user_id'=> $id, 'page_id' => 0])->orderBy('id', 'desc')->get();
+        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user'])->where(['user_id'=> $id, 'page_id' => 0])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
     public function getPagePost($id)
     {
-        $data = PostModel::with(['user', 'category', 'page', 'likes'])
+        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments'])
                 ->where(['posts.page_id' => $id])
                 ->orderBy('id', 'desc')
                 ->get();
@@ -94,9 +94,10 @@ class PostController extends Controller
             "page_id" => $post['page_id'],
             "title" => $post['title'],
             "description" => $post['description'],
-            "newslink" => $post['newslink'],
-            "video" => strip_tags($post['video']),
         ];
+        if($data['type'] == 4){
+            $data['description'] = strip_tags($data['description']);
+        }
 
        if(@$post['image'])
         {
@@ -120,12 +121,11 @@ class PostController extends Controller
             "category_id" => $post['category_id'],
             "title" => $post['title'],
             "description" => $post['description'],
-            "newslink" => $post['newslink'],
-            "video" => $post['video'],
         ];
-
+        if($data['type'] == 4){
+            $data['description'] = strip_tags($data['description']);
+        }
         $row = PostModel::findOrFail($id);
-
 
         if(@$post['image'])
         {

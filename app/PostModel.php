@@ -7,6 +7,7 @@ use App\PostLikeModel;
 use App\UserModel;
 use App\CategoryModel;
 use App\PageModel;
+use App\PostCommentModel;
 
 
 class PostModel extends Model
@@ -25,5 +26,8 @@ class PostModel extends Model
     }
     public function likes(){
         return $this->hasMany(PostLikeModel::class, 'post_id');
+    }
+    public function comments(){
+        return $this->hasMany(PostCommentModel::class, 'post_id');
     }
 }
