@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\ClassifiedModel;
 use App\ClassifiedGalleryModel;
+use File;
 
 
 class ClassifiedController extends Controller
