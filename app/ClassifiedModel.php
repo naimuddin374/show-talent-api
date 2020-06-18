@@ -11,7 +11,7 @@ use App\ClassifiedGalleryModel;
 class ClassifiedModel extends Model
 {
     protected $table = 'classifieds';
-    protected $fillable = ['user_id', 'page_id', 'type', 'category_id', 'contact', 'email', 'title', 'description', 'image', 'price', 'city_id', 'address', 'status'];
+    protected $fillable = ['user_id', 'page_id', 'type', 'category_id', 'contact', 'email', 'title', 'description', 'image', 'price', 'currency', 'address', 'status'];
 
     public function user(){
         return $this->belongsTo(UserModel::class);

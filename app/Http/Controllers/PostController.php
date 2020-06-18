@@ -41,7 +41,7 @@ class PostController extends Controller
         return response()->json($data, 200);
     }
 
-    public function getPagePost($id)
+    public function getByPage($id)
     {
         $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments'])
                 ->where(['posts.page_id' => $id])

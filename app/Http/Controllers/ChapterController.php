@@ -15,13 +15,11 @@ class ChapterController extends Controller
         return response()->json($data, 200);
     }
 
-
     public function view()
     {
         $data = ChapterModel::where('status', 1)->orderBy('id', 'DESC')->get();
         return response()->json($data, 200);
     }
-
 
     public function detail($id)
     {
@@ -52,9 +50,8 @@ class ChapterController extends Controller
         $post = $request->all();
         $validator = Validator::make($post, [
             'ebook_id' => 'required|numeric',
-            'sequence' => 'required|numeric',
-            'status' => 'required|numeric',
-            'book' => 'required',
+            'name' => 'required',
+            'description' => 'required',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 406);
@@ -62,20 +59,9 @@ class ChapterController extends Controller
         $data = [
             "ebook_id" => $post['ebook_id'],
             "sequence" => $post['sequence'],
-            "status" => $post['status'],
-            "book" => $post['book'],
+            "name" => $post['name'],
+            "description" => $post['description'],
         ];
-
-
-        if(@$post['image'])
-        {
-            $image = $post['image'];
-            $name = time().'.' . explode('/', explode(':', substr($image, 0, strpos($image, ';')))[1])[1];
-            \Image::make($image)->save(storage_path('app/public/images/').$name);
-            $data['image'] = 'storage/images/'.$name;
-        }
-
-
         ChapterModel::create($data)->id;
         return response()->json(["message" => "Created successful."], 201);
     }
@@ -85,30 +71,11 @@ class ChapterController extends Controller
     {
         $post = $request->all();
         $data = [
-            "ebook_id" => $post['ebook_id'],
-            "sequence" => $post['sequence'],
-            "status" => $post['status'],
-            "book" => $post['book'],
-            "reject_note" => $post['reject_note'],
-            "reopen_note" => $post['reopen_note'],
+             "sequence" => $post['sequence'],
+            "name" => $post['name'],
+            "description" => $post['description'],
         ];
         $row = ChapterModel::findOrFail($id);
-
-
-        if(@$post['image'])
-        {
-            $image = $post['image'];
-            $name = time().'.' . explode('/', explode(':', substr($image, 0, strpos($image, ';')))[1])[1];
-            \Image::make($image)->save(storage_path('app/public/images/').$name);
-            $data['image'] = 'storage/images/'.$name;
-        }
-        $image_path = $row->image;
-        if(File::exists($image_path) && @$data['image'])
-        {
-            File::delete($image_path);
-        }
-
-
         $row->update($data);
         return response()->json(["message" => "Updated successful."], 201);
     }

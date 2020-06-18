@@ -27,19 +27,19 @@ class ClassifiedController extends Controller
 
     public function detail($id)
     {
-        $data = ClassifiedModel::with(['user', 'category', 'page', 'gallery'])->where(['id' => $id])->orderBy('id', 'desc')->first();
+        $data = ClassifiedModel::with(['user', 'category', 'page'])->where(['id' => $id])->orderBy('id', 'desc')->first();
         return response()->json($data, 200);
     }
 
     public function viewByJoinId($id)
     {
-        $data = ClassifiedModel::with(['user', 'category', 'page', 'gallery'])->where(['user_id' => $id, 'page_id' => 0])->orderBy('id', 'desc')->get();
+        $data = ClassifiedModel::with(['user', 'category', 'page'])->where(['user_id' => $id, 'page_id' => 0])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
     public function getPagePost($id)
     {
-        $data = ClassifiedModel::with(['user', 'category', 'page', 'gallery'])->where(['page_id'=> $id])->orderBy('id', 'desc')->get();
+        $data = ClassifiedModel::with(['user', 'category', 'page'])->where(['page_id'=> $id])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
@@ -49,7 +49,6 @@ class ClassifiedController extends Controller
         $post = $request->all();
         $validator = Validator::make($post, [
             'type' => 'required|numeric',
-            'category_id' => 'numeric',
             'title' => 'required',
         ]);
         if ($validator->fails()) {
@@ -60,13 +59,12 @@ class ClassifiedController extends Controller
             "user_id" => $auth['id'],
             "page_id" => $post['page_id'],
             "type" => $post['type'],
-            "category_id" => $post['category_id'],
             "contact" => $post['contact'],
             "email" => $post['email'],
             "title" => $post['title'],
             "description" => $post['description'],
             "price" => $post['price'],
-            "city_id" => $post['city_id'],
+            "currency" => $post['currency'],
             "address" => $post['address'],
         ];
 
@@ -99,13 +97,12 @@ class ClassifiedController extends Controller
         $post = $request->all();
         $data = [
             "type" => $post['type'],
-            "category_id" => $post['category_id'],
             "contact" => $post['contact'],
             "email" => $post['email'],
             "title" => $post['title'],
             "description" => $post['description'],
             "price" => $post['price'],
-            "city_id" => $post['city_id'],
+            "currency" => $post['currency'],
             "address" => $post['address'],
         ];
 

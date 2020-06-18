@@ -34,12 +34,7 @@ class EbookController extends Controller
 
     public function detail($id)
     {
-        $data = EbookModel::leftJoin('users', 'users.id', '=', 'ebooks.user_id')
-                ->leftJoin('categories', 'categories.id', '=', 'ebooks.category_id')
-                ->leftJoin('authors', 'authors.id', '=', 'ebooks.author_id')
-                ->select('users.name as user_name', 'categories.name as cat_name', 'authors.name as author_name','ebooks.*')
-                ->where('ebooks.id', $id)
-                ->first();
+        $data = EbookModel::with(['user', 'page'])->where(['id' => $id])->orderBy('id', 'desc')->first();
         return response()->json($data, 200);
     }
 
@@ -73,93 +68,41 @@ class EbookController extends Controller
     {
         $post = $request->all();
         $validator = Validator::make($post, [
-            'user_id' => 'required',
-            'category_id' => 'required|numeric',
-            'author_id' => 'numeric',
+            'name' => 'required',
+            'summery' => 'required',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 406);
         }
+        $auth = auth()->user();
         $data = [
-            "user_id" => $post['user_id'],
-            "category_id" => $post['category_id'],
-            "language" => $post['language'],
-            "author_id" => $post['author_id'],
+            "user_id" => $auth['id'],
+            "name" => $post['name'],
+            "author_name" => $post['author_name'],
             "publication_date" => $post['publication_date'],
-            "ebook_summery" => $post['ebook_summery'],
-            "author_summery" => $post['author_summery'],
-            "number_of_chapter" => $post['number_of_chapter'],
             "preface" => $post['preface'],
-            "price" => $post['price'],
+            "summery" => $post['summery'],
+            "author_summery" => $post['author_summery'],
+            "preface" => $post['preface'],
         ];
-
-
-        if(@$post['font_image'])
-        {
-            $image = $post['font_image'];
-            $name = time().'.' . explode('/', explode(':', substr($image, 0, strpos($image, ';')))[1])[1];
-            \Image::make($image)->save(storage_path('app/public/images/').$name);
-            $data['font_image'] = 'storage/images/'.$name;
-        }
-
-        if(@$post['back_image'])
-        {
-            $image = $post['back_image'];
-            $name = time().'.' . explode('/', explode(':', substr($image, 0, strpos($image, ';')))[1])[1];
-            \Image::make($image)->save(storage_path('app/public/images/').$name);
-            $data['back_image'] = 'storage/images/'.$name;
-        }
-
-
-        EbookModel::create($data)->id;
-        return response()->json(["message" => "Created successful."], 201);
+        $id = EbookModel::create($data)->id;
+        return response()->json(["message" => "Created successful.", 'id' => $id], 201);
     }
-
 
     public function update(Request $request, $id)
     {
         $post = $request->all();
         $data = [
-            "category_id" => $post['category_id'],
-            "title" => $post['title'],
-            "language" => $post['language'],
+            "name" => $post['name'],
+            "author_name" => $post['author_name'],
             "publication_date" => $post['publication_date'],
-            "ebook_summery" => $post['ebook_summery'],
+            "preface" => $post['preface'],
+            "summery" => $post['summery'],
             "author_summery" => $post['author_summery'],
             "preface" => $post['preface'],
-            "price" => $post['price'],
-            "status" => $post['status'],
         ];
 
         $row = EbookModel::findOrFail($id);
-
-
-        if(@$post['font_image'])
-        {
-            $image = $post['font_image'];
-            $name = time().'.' . explode('/', explode(':', substr($image, 0, strpos($image, ';')))[1])[1];
-            \Image::make($image)->save(storage_path('app/public/images/').$name);
-            $data['font_image'] = 'storage/images/'.$name;
-        }
-        $image_path = $row->font_image;
-        if(File::exists($image_path) && @$data['font_image'])
-        {
-            File::delete($image_path);
-        }
-
-        if(@$post['back_image'])
-        {
-            $image = $post['back_image'];
-            $name = time().'.' . explode('/', explode(':', substr($image, 0, strpos($image, ';')))[1])[1];
-            \Image::make($image)->save(storage_path('app/public/images/').$name);
-            $data['back_image'] = 'storage/images/'.$name;
-        }
-        $image_path = $row->back_image;
-        if(File::exists($image_path) && @$data['back_image'])
-        {
-            File::delete($image_path);
-        }
-
         $row->update($data);
         return response()->json(["message" => "Updated successful."], 201);
     }
@@ -169,7 +112,7 @@ class EbookController extends Controller
     {
         $row = EbookModel::findOrFail($id);
 
-        $image_path = $row->font_image;
+        $image_path = $row->front_image;
         if(File::exists($image_path))
         {
             File::delete($image_path);
@@ -183,5 +126,44 @@ class EbookController extends Controller
 
         $row->delete();
         return response()->json(["message" => "Deleted successful."], 201);
+    }
+
+    public function uploadCoverPhoto(Request $request, $id)
+    {
+        $post = $request->all();
+        $data = [];
+
+        if(@$post['front_image'])
+        {
+            $image = $post['front_image'];
+            $name = time().'_front.' . explode('/', explode(':', substr($image, 0, strpos($image, ';')))[1])[1];
+            \Image::make($image)->save('images/ebook/'.$name);
+            $data['front_image'] = 'images/ebook/'.$name;
+        }
+
+        if(@$post['back_image'])
+        {
+            $image = $post['back_image'];
+            $name = time().'_back.' . explode('/', explode(':', substr($image, 0, strpos($image, ';')))[1])[1];
+            \Image::make($image)->save('images/ebook/'.$name);
+            $data['back_image'] = 'images/ebook/'.$name;
+        }
+
+        $row = EbookModel::findOrFail($id);
+        $image_path = $row->front_image;
+        if(File::exists($image_path) && @$data['front_image'])
+        {
+            File::delete($image_path);
+        }
+
+        $row = EbookModel::findOrFail($id);
+        $image_path = $row->back_image;
+        if(File::exists($image_path) && @$data['back_image'])
+        {
+            File::delete($image_path);
+        }
+
+        $row->update($data);
+        return response()->json(["message" => "Created successful."], 201);
     }
 }
