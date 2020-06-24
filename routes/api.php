@@ -74,3 +74,4 @@ Route::post("auth/registration", "UserController@store");
 Route::post("auth/login", "AuthController@authenticate");
 // Route::get("test", "CategoryController@test");
 Route::get("test", "TestController@index");
+Route::get("print-pdf/{id}", "EbookController@printPDF");

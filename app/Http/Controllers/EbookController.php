@@ -5,49 +5,34 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\EbookModel;
+use App\ChapterModel;
 use File;
+
 
 class EbookController extends Controller
 {
     public function adminView()
     {
-        $data = EbookModel::leftJoin('users', 'users.id', '=', 'ebooks.user_id')
-                ->leftJoin('categories', 'categories.id', '=', 'ebooks.category_id')
-                ->leftJoin('authors', 'authors.id', '=', 'ebooks.author_id')
-                ->select('users.name as user_name', 'categories.name as cat_name', 'authors.name as author_name','ebooks.*')
-                ->orderBy('ebooks.id', 'DESC')
-                ->get();
+        $data = EbookModel::with(['user', 'page', 'chapter', 'category'])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
     public function view()
     {
-        $data = EbookModel::leftJoin('users', 'users.id', '=', 'ebooks.user_id')
-                ->leftJoin('categories', 'categories.id', '=', 'ebooks.category_id')
-                ->leftJoin('authors', 'authors.id', '=', 'ebooks.author_id')
-                ->select('users.name as user_name', 'categories.name as cat_name', 'authors.name as author_name','ebooks.*')
-                ->where('ebooks.status', 1)
-                ->orderBy('ebooks.id', 'DESC')
-                ->get();
+        $data = EbookModel::with(['user', 'page', 'chapter', 'category'])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
     public function detail($id)
     {
-        $data = EbookModel::with(['user', 'page'])->where(['id' => $id])->orderBy('id', 'desc')->first();
+        $data = EbookModel::with(['user', 'page', 'chapter', 'category'])->where(['id' => $id])->orderBy('id', 'desc')->first();
         return response()->json($data, 200);
     }
 
 
     public function viewByJoinId($id)
     {
-        $data = EbookModel::leftJoin('users', 'users.id', '=', 'ebooks.user_id')
-                ->leftJoin('categories', 'categories.id', '=', 'ebooks.category_id')
-                ->leftJoin('authors', 'authors.id', '=', 'ebooks.author_id')
-                ->select('users.name as user_name', 'categories.name as cat_name', 'authors.name as author_name','ebooks.*')
-                ->where('ebooks.user_id', $id)
-                ->orderBy('ebooks.id', 'DESC')
-                ->get();
+        $data = EbookModel::with(['user', 'page', 'chapter', 'category'])->where(['user_id' => $id])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
@@ -69,7 +54,7 @@ class EbookController extends Controller
         $post = $request->all();
         $validator = Validator::make($post, [
             'name' => 'required',
-            'summery' => 'required',
+            'summary' => 'required',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 406);
@@ -77,12 +62,14 @@ class EbookController extends Controller
         $auth = auth()->user();
         $data = [
             "user_id" => $auth['id'],
+            "category_id" => $post['category_id'],
             "name" => $post['name'],
+            "page_id" => $post['page_id'],
             "author_name" => $post['author_name'],
             "publication_date" => $post['publication_date'],
             "preface" => $post['preface'],
-            "summery" => $post['summery'],
-            "author_summery" => $post['author_summery'],
+            "summary" => $post['summary'],
+            "author_summary" => $post['author_summary'],
             "preface" => $post['preface'],
         ];
         $id = EbookModel::create($data)->id;
@@ -94,11 +81,12 @@ class EbookController extends Controller
         $post = $request->all();
         $data = [
             "name" => $post['name'],
+            "category_id" => $post['category_id'],
             "author_name" => $post['author_name'],
             "publication_date" => $post['publication_date'],
             "preface" => $post['preface'],
-            "summery" => $post['summery'],
-            "author_summery" => $post['author_summery'],
+            "summary" => $post['summary'],
+            "author_summary" => $post['author_summary'],
             "preface" => $post['preface'],
         ];
 

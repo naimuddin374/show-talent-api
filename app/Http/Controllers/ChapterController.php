@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\ChapterModel;
 use File;
+use PDF;
 
 class ChapterController extends Controller
 {
@@ -62,7 +63,10 @@ class ChapterController extends Controller
             "name" => $post['name'],
             "description" => $post['description'],
         ];
-        ChapterModel::create($data)->id;
+        $id = ChapterModel::create($data)->id;
+        if($id){
+            // $this->makePDF($post['ebook_id']);
+        }
         return response()->json(["message" => "Created successful."], 201);
     }
 
@@ -77,6 +81,8 @@ class ChapterController extends Controller
         ];
         $row = ChapterModel::findOrFail($id);
         $row->update($data);
+        // $this->makePDF($row->ebook_id);
+
         return response()->json(["message" => "Updated successful."], 201);
     }
 
@@ -86,5 +92,15 @@ class ChapterController extends Controller
         $row = ChapterModel::findOrFail($id);
         $row->delete();
         return response()->json(["message" => "Deleted successful."], 201);
+    }
+
+    public function makePDF($id)
+    {
+        $data = ChapterModel::where(['ebook_id' => $id])->orderBy('sequence', 'ASC')->get();
+        $pdf = PDF::loadView('ebook-pdf', ['data' => $data]);
+        $content = $pdf->output();
+        $x= public_path("pdf/book-{$id}.pdf");
+        file_put_contents($x, $content);
+        // return $pdf->download('medium.pdf');
     }
 }
