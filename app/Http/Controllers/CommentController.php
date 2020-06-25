@@ -11,20 +11,20 @@ class CommentController extends Controller
 {
     public function adminView()
     {
-        $data = CommentModel::with(['user'])->orderBy('id', 'DESC')->get();
+        $data = CommentModel::with(['user', 'likes'])->orderBy('id', 'DESC')->get();
         return response()->json($data, 200);
     }
 
 
     public function view()
     {
-        $data = CommentModel::with(['user'])->orderBy('id', 'DESC')->get();
+        $data = CommentModel::with(['user', 'likes'])->orderBy('id', 'DESC')->get();
         return response()->json($data, 200);
     }
 
     public function viewByJoinId($id)
     {
-        $data = CommentModel::with(['user'])->where(['ebook_id'=> $id])->orderBy('id', 'DESC')->get();
+        $data = CommentModel::with(['user', 'likes'])->where(['ebook_id'=> $id])->orderBy('id', 'DESC')->get();
         return response()->json($data, 200);
     }
 

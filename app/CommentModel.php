@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\UserModel;
+use App\CommentLikeModel;
 
 
 class CommentModel extends Model
@@ -13,5 +14,8 @@ class CommentModel extends Model
 
     public function user(){
         return $this->belongsTo(UserModel::class);
+    }
+    public function likes(){
+        return $this->hasMany(CommentLikeModel::class, 'comment_id');
     }
 }

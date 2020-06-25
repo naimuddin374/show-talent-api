@@ -19,20 +19,20 @@ class EbookController extends Controller
 
     public function view()
     {
-        $data = EbookModel::with(['user', 'page', 'chapter', 'category'])->orderBy('id', 'desc')->get();
+        $data = EbookModel::with(['user', 'page', 'chapter', 'category', 'comments.likes'])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
     public function detail($id)
     {
-        $data = EbookModel::with(['user', 'page', 'chapter', 'category'])->where(['id' => $id])->orderBy('id', 'desc')->first();
+        $data = EbookModel::with(['user', 'page', 'chapter', 'category', 'comments'])->where(['id' => $id])->orderBy('id', 'desc')->first();
         return response()->json($data, 200);
     }
 
 
     public function viewByJoinId($id)
     {
-        $data = EbookModel::with(['user', 'page', 'chapter', 'category'])->where(['user_id' => $id])->orderBy('id', 'desc')->get();
+        $data = EbookModel::with(['user', 'page', 'chapter', 'category', 'comments'])->where(['user_id' => $id])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 

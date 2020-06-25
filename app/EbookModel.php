@@ -7,6 +7,7 @@ use App\UserModel;
 use App\PageModel;
 use App\ChapterModel;
 use App\CategoryModel;
+use App\CommentModel;
 
 
 class EbookModel extends Model
@@ -29,7 +30,7 @@ class EbookModel extends Model
     // public function likes(){
     //     return $this->hasMany(PostLikeModel::class, 'post_id');
     // }
-    // public function comments(){
-    //     return $this->hasMany(PostCommentModel::class, 'post_id');
-    // }
+    public function comments(){
+        return $this->hasMany(CommentModel::class, 'ebook_id');
+    }
 }
