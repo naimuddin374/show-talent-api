@@ -13,40 +13,29 @@ class PageController extends Controller
 {
     public function adminView()
     {
-        $data = PageModel::orderBy('id', 'DESC')->get();
+        $data = PageModel::with(['user', 'category'])->where('id', $id)->orderBy('id', 'DESC')->get();
         return response()->json($data, 200);
     }
 
-
     public function view()
     {
-        $data = PageModel::leftJoin('categories', 'pages.category_id', '=', 'categories.id')
-                ->where('pages.status', 1)
-                ->orderBy('pages.id', 'DESC')
-                ->select('categories.name as cat_name','pages.*')
-                ->get();
+        $data = PageModel::with(['user', 'category'])->orderBy('id', 'DESC')->get();
         return response()->json($data, 200);
     }
 
     public function detail($id)
     {
+        $data = PageModel::with(['user', 'category'])->where('id', $id)->first();
         $following = FollowerModel::where(['user_id' => $id, 'is_page' => 1])->count();
         $followers = FollowerModel::where(['profile_id' => $id, 'is_page' => 1])->count();
-        $data = PageModel::where('id', $id)->first();
         return response()->json(['pageInfo' => $data, 'following' => $following, 'followers' => $followers], 200);
     }
 
     public function viewByJoinId($id)
     {
-        $data = PageModel::leftJoin('categories', 'pages.category_id', '=', 'categories.id')
-                ->where(['pages.user_id' => $id])
-                // ->where(['pages.status' => 1, 'pages.user_id' => $id])
-                ->orderBy('pages.id', 'DESC')
-                ->select('categories.name as cat_name','pages.*')
-                ->get();
+        $data = PageModel::with(['user', 'category'])->where('user_id', $id)->orderBy('id', 'DESC')->get();
         return response()->json($data, 200);
     }
-
 
     public function store(Request $request)
     {

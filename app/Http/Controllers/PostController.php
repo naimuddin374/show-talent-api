@@ -16,21 +16,21 @@ class PostController extends Controller
 {
     public function adminView()
     {
-        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments'])->get();
+        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user'])->get();
         return response()->json($data, 200);
     }
 
 
     public function view()
     {
-        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments'])->get();
+        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user'])->get();
         return response()->json($data, 200);
     }
 
 
     public function detail($id)
     {
-        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments'])->where(['id'=> $id])->orderBy('id', 'desc')->get();
+        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user'])->where(['id'=> $id])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
@@ -43,7 +43,7 @@ class PostController extends Controller
 
     public function getByPage($id)
     {
-        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments'])
+        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user'])
                 ->where(['posts.page_id' => $id])
                 ->orderBy('id', 'desc')
                 ->get();
