@@ -16,21 +16,21 @@ class PostController extends Controller
 {
     public function adminView()
     {
-        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user'])->get();
+        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user'])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
 
     public function view()
     {
-        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user'])->get();
+        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user'])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
 
     public function detail($id)
     {
-        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user'])->where(['id'=> $id])->orderBy('id', 'desc')->get();
+        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user'])->where(['id'=> $id])->orderBy('id', 'desc')->first();
         return response()->json($data, 200);
     }
 
@@ -43,10 +43,7 @@ class PostController extends Controller
 
     public function getByPage($id)
     {
-        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user'])
-                ->where(['posts.page_id' => $id])
-                ->orderBy('id', 'desc')
-                ->get();
+        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user'])->where(['posts.page_id' => $id])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
@@ -60,19 +57,6 @@ class PostController extends Controller
         $data = PostModel::where('id', $id)->update(['status' => 2]);
         return response()->json(["message" => "Rejected successful."], 201);
     }
-
-
-    public function postShowByType($type)
-    {
-        $data = PostModel::leftJoin('users', 'users.id', '=', 'posts.user_id')
-                ->leftJoin('categories', 'categories.id', '=', 'posts.category_id')
-                ->where('posts.type', $type)
-                ->select('users.name as user_name', 'categories.name as cat_name','posts.*')
-                ->orderBy('posts.id', 'DESC')
-                ->get();
-        return response()->json($data, 200);
-    }
-
 
     public function store(Request $request)
     {
@@ -94,10 +78,9 @@ class PostController extends Controller
             "page_id" => $post['page_id'],
             "title" => $post['title'],
             "description" => $post['description'],
+            "newslink" => @$post['newslink'],
+            "video" => @$post['video'],
         ];
-        if($data['type'] == 4){
-            $data['description'] = strip_tags($data['description']);
-        }
 
        if(@$post['image'])
         {
@@ -121,10 +104,9 @@ class PostController extends Controller
             "category_id" => $post['category_id'],
             "title" => $post['title'],
             "description" => $post['description'],
+            "newslink" => @$post['newslink'],
+            "video" => @$post['video'],
         ];
-        if($data['type'] == 4){
-            $data['description'] = strip_tags($data['description']);
-        }
         $row = PostModel::findOrFail($id);
 
         if(@$post['image'])

@@ -18,7 +18,7 @@ class ChapterController extends Controller
 
     public function view()
     {
-        $data = ChapterModel::where('status', 1)->orderBy('id', 'DESC')->get();
+        $data = ChapterModel::where('status', 1)->orderBy('sequence', 'ASC')->get();
         return response()->json($data, 200);
     }
 
@@ -30,7 +30,7 @@ class ChapterController extends Controller
 
     public function viewByJoinId($id)
     {
-        $data = ChapterModel::where('ebook_id', $id)->orderBy('id', 'DESC')->get();
+        $data = ChapterModel::where('ebook_id', $id)->orderBy('sequence', 'ASC')->get();
         return response()->json($data, 200);
     }
 
@@ -75,7 +75,7 @@ class ChapterController extends Controller
     {
         $post = $request->all();
         $data = [
-             "sequence" => $post['sequence'],
+            "sequence" => $post['sequence'],
             "name" => $post['name'],
             "description" => $post['description'],
         ];
