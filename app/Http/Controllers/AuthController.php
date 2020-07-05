@@ -21,6 +21,8 @@ class AuthController extends Controller
         $user = User::where(['email' => $credentials['email']])->first();
         if(!$user){
             return response()->json(["message" => "Invalid Credentials."], 401);
+        } else if(!Hash::check($credentials['password'], $user->password)){
+            return response()->json(["message" => "Invalid Credentials."], 401);
         }else{
             $customClaims = [
                 'id' => $user->id,
