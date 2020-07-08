@@ -14,7 +14,7 @@ class ClassifiedController extends Controller
 
     public function adminView()
     {
-        $data = ClassifiedModel::orderBy('id', 'DESC')->get();
+        $data = ClassifiedModel::with(['user', 'category', 'page'])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
@@ -42,7 +42,34 @@ class ClassifiedController extends Controller
         $data = ClassifiedModel::with(['user', 'category', 'page'])->where(['page_id'=> $id])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
+    public function approve(Request $request, $id)
+    {
+        $auth = auth()->user();
+        $post = $request->all();
+        $data = [
+            "status" => 1,
+            "admin_id" => $auth['id'],
+            "reject_note" => null
+        ];
+        $row = ClassifiedModel::findOrFail($id);
+        $row->update($data);
 
+        $data = ClassifiedModel::where('id', $id)->update(['status' => 1]);
+        return response()->json(["message" => "Approve successful."], 201);
+    }
+    public function reject(Request $request, $id)
+    {
+        $auth = auth()->user();
+        $post = $request->all();
+        $data = [
+            "status" => 2,
+            "reject_note" => $post['reject_note'],
+            "admin_id" => $auth['id'],
+        ];
+        $row = ClassifiedModel::findOrFail($id);
+        $row->update($data);
+        return response()->json(["message" => "Rejected successfully."], 201);
+    }
 
     public function store(Request $request)
     {
