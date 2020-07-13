@@ -36,15 +36,33 @@ class EbookController extends Controller
         return response()->json($data, 200);
     }
 
-    public function approve($id)
+    public function approve(Request $request, $id)
     {
+        $auth = auth()->user();
+        $post = $request->all();
+        $data = [
+            "status" => 1,
+            "admin_id" => $auth['id'],
+            "reject_note" => null
+        ];
+        $row = EbookModel::findOrFail($id);
+        $row->update($data);
+
         $data = EbookModel::where('id', $id)->update(['status' => 1]);
         return response()->json(["message" => "Approve successful."], 201);
     }
-    public function reject($id)
+    public function reject(Request $request, $id)
     {
-        $data = EbookModel::where('id', $id)->update(['status' => 2]);
-        return response()->json(["message" => "Rejected successful."], 201);
+        $auth = auth()->user();
+        $post = $request->all();
+        $data = [
+            "status" => 2,
+            "reject_note" => $post['reject_note'],
+            "admin_id" => $auth['id'],
+        ];
+        $row = EbookModel::findOrFail($id);
+        $row->update($data);
+        return response()->json(["message" => "Rejected successfully."], 201);
     }
 
 
