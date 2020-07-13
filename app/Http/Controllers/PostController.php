@@ -23,7 +23,7 @@ class PostController extends Controller
 
     public function view()
     {
-        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user'])->orderBy('id', 'desc')->get();
+        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user'])->where(['status' => 1])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
@@ -37,13 +37,13 @@ class PostController extends Controller
 
     public function viewByJoinId($id)
     {
-        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user'])->where(['user_id'=> $id, 'page_id' => 0])->orderBy('id', 'desc')->get();
+        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user'])->where(['user_id'=> $id, 'page_id' => 0, 'status' => 1])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
     public function getByPage($id)
     {
-        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user'])->where(['posts.page_id' => $id])->orderBy('id', 'desc')->get();
+        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user'])->where(['posts.page_id' => $id, 'status' => 1])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
@@ -58,8 +58,6 @@ class PostController extends Controller
         ];
         $row = PostModel::findOrFail($id);
         $row->update($data);
-
-        $data = PostModel::where('id', $id)->update(['status' => 1]);
         return response()->json(["message" => "Approve successful."], 201);
     }
     public function reject(Request $request, $id)
@@ -82,14 +80,12 @@ class PostController extends Controller
         $validator = Validator::make($post, [
             'type' => 'required|numeric',
             'category_id' => 'required|numeric',
-            'status' => 'required|numeric',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 406);
         }
         $auth = auth()->user();
         $data = [
-            "status" => $post['status'],
             "user_id" => $auth['id'],
             "type" => $post['type'],
             "category_id" => $post['category_id'],
@@ -117,7 +113,6 @@ class PostController extends Controller
     {
         $post = $request->all();
         $data = [
-            "status" => $post['status'],
             "type" => $post['type'],
             "category_id" => $post['category_id'],
             "title" => $post['title'],

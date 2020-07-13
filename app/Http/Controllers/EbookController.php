@@ -19,7 +19,7 @@ class EbookController extends Controller
 
     public function view()
     {
-        $data = EbookModel::with(['user', 'page', 'chapter', 'category', 'comments.likes'])->orderBy('id', 'desc')->get();
+        $data = EbookModel::with(['user', 'page', 'chapter', 'category', 'comments.likes'])->where(['status' => 1])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
@@ -32,7 +32,7 @@ class EbookController extends Controller
 
     public function viewByJoinId($id)
     {
-        $data = EbookModel::with(['user', 'page', 'chapter', 'category', 'comments'])->where(['user_id' => $id])->orderBy('id', 'desc')->get();
+        $data = EbookModel::with(['user', 'page', 'chapter', 'category', 'comments'])->where(['user_id' => $id, 'status' => 1])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
@@ -47,8 +47,6 @@ class EbookController extends Controller
         ];
         $row = EbookModel::findOrFail($id);
         $row->update($data);
-
-        $data = EbookModel::where('id', $id)->update(['status' => 1]);
         return response()->json(["message" => "Approve successful."], 201);
     }
     public function reject(Request $request, $id)
@@ -57,8 +55,8 @@ class EbookController extends Controller
         $post = $request->all();
         $data = [
             "status" => 2,
-            "reject_note" => $post['reject_note'],
             "admin_id" => $auth['id'],
+            "reject_note" => $post['reject_note'],
         ];
         $row = EbookModel::findOrFail($id);
         $row->update($data);

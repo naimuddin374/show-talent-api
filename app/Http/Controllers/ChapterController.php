@@ -45,8 +45,6 @@ class ChapterController extends Controller
         ];
         $row = ChapterModel::findOrFail($id);
         $row->update($data);
-
-        $data = ChapterModel::where('id', $id)->update(['status' => 1]);
         return response()->json(["message" => "Approve successful."], 201);
     }
     public function reject(Request $request, $id)
@@ -55,8 +53,8 @@ class ChapterController extends Controller
         $post = $request->all();
         $data = [
             "status" => 2,
-            "reject_note" => $post['reject_note'],
             "admin_id" => $auth['id'],
+            "reject_note" => $post['reject_note'],
         ];
         $row = ChapterModel::findOrFail($id);
         $row->update($data);

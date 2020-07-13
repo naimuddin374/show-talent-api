@@ -20,7 +20,7 @@ class ClassifiedController extends Controller
 
     public function view()
     {
-        $data = ClassifiedModel::orderBy('id', 'DESC')->get();
+        $data = ClassifiedModel::orderBy('id', 'DESC')->where(['status' => 1])->get();
         // $data = ClassifiedModel::where('status', 1)->orderBy('id', 'DESC')->get();
         return response()->json($data, 200);
     }
@@ -33,13 +33,13 @@ class ClassifiedController extends Controller
 
     public function viewByJoinId($id)
     {
-        $data = ClassifiedModel::with(['user', 'category', 'page'])->where(['user_id' => $id, 'page_id' => 0])->orderBy('id', 'desc')->get();
+        $data = ClassifiedModel::with(['user', 'category', 'page'])->where(['user_id' => $id, 'page_id' => 0, 'status' => 1])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
     public function getPagePost($id)
     {
-        $data = ClassifiedModel::with(['user', 'category', 'page'])->where(['page_id'=> $id])->orderBy('id', 'desc')->get();
+        $data = ClassifiedModel::with(['user', 'category', 'page'])->where(['page_id'=> $id, 'status' => 1])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
     public function approve(Request $request, $id)
@@ -54,7 +54,6 @@ class ClassifiedController extends Controller
         $row = ClassifiedModel::findOrFail($id);
         $row->update($data);
 
-        $data = ClassifiedModel::where('id', $id)->update(['status' => 1]);
         return response()->json(["message" => "Approve successful."], 201);
     }
     public function reject(Request $request, $id)
@@ -63,8 +62,8 @@ class ClassifiedController extends Controller
         $post = $request->all();
         $data = [
             "status" => 2,
-            "reject_note" => $post['reject_note'],
             "admin_id" => $auth['id'],
+            "reject_note" => $post['reject_note'],
         ];
         $row = ClassifiedModel::findOrFail($id);
         $row->update($data);
