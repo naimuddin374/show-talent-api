@@ -18,10 +18,41 @@ class AuthController extends Controller
     public function authenticate(Request $request)
     {
         $credentials = $request->all();
-        $user = User::where(['email' => $credentials['email']])->first();
+        $user = User::where(['email' => $credentials['email'], 'status' => 1, 'type' => 1])->first();
         if(!$user){
             return response()->json(["message" => "Invalid Credentials."], 401);
         } else if(!Hash::check($credentials['password'], $user->password)){
+            return response()->json(["message" => "Invalid Credentials."], 401);
+        }else{
+            $customClaims = [
+                'id' => $user->id,
+                'full_name' => $user->full_name,
+                'name' => $user->name,
+                'contact' => $user->contact,
+                'email' => $user->email,
+                'image' => $user->image,
+                'type' => $user->type,
+                'status' => $user->status,
+                'balance' => $user->balance,
+            ];
+            $token = JWTAuth::claims($customClaims)->fromUser($user);
+            if(!$token){
+                return response()->json(["message" => "Invalid Credentials."], 401);
+            }else{
+                return response()->json(["message" => "Login Successful.", 'token' => 'Bearer '.$token], 200);
+            }
+        }
+    }
+
+    public function adminAuthenticate(Request $request)
+    {
+        $credentials = $request->all();
+        $user = User::where(['email' => $credentials['email'], 'status' => 1])->first();
+        if(!$user){
+            return response()->json(["message" => "Invalid Credentials."], 401);
+        } else if(!Hash::check($credentials['password'], $user->password)){
+            return response()->json(["message" => "Invalid Credentials."], 401);
+        } else if($user->type != 3 && $user->type != 2){
             return response()->json(["message" => "Invalid Credentials."], 401);
         }else{
             $customClaims = [

@@ -30,4 +30,7 @@ class PostModel extends Model
     public function comments(){
         return $this->hasMany(PostCommentModel::class, 'post_id');
     }
+    public function moderator(){
+        return $this->belongsTo(UserModel::class, 'admin_id');
+    }
 }

@@ -57,7 +57,11 @@ class UserController extends Controller
             "status" => $post['status'],
         ];
         $id = UserModel::create($data)->id;
-        $result = UserInfoModel::create(['user_id' => $id, 'dob' => $post['dob']])->id;
+        if(@$post['dob']){
+            $result = UserInfoModel::create(['user_id' => $id, 'dob' => $post['dob']])->id;
+        }else{
+            $result = $id;
+        }
         if($result){
             return response()->json(["message" => "Created successful."], 201);
         } else{
@@ -78,7 +82,7 @@ class UserController extends Controller
             "status" => $post['status'],
         ];
         if($post['password']){
-            $data['password'] = md5($post['password']);
+            $data['password'] = Hash::make($post['password']);
         }
         $row = UserModel::findOrFail($id);
         $row->update($data);

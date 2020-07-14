@@ -73,6 +73,6 @@ Route::group(['middleware' => ['jwt.verify']], function() {
 
 Route::post("auth/registration", "UserController@store");
 Route::post("auth/login", "AuthController@authenticate");
+Route::post("auth/admin/login", "AuthController@adminAuthenticate");
 // Route::get("test", "CategoryController@test");
 Route::get("test", "TestController@index");
-Route::get("print-pdf/{id}", "EbookController@printPDF");

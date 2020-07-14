@@ -16,7 +16,7 @@ class PostController extends Controller
 {
     public function adminView()
     {
-        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user'])->orderBy('id', 'desc')->get();
+        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user', 'moderator'])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
@@ -30,7 +30,7 @@ class PostController extends Controller
 
     public function detail($id)
     {
-        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user'])->where(['id'=> $id])->orderBy('id', 'desc')->first();
+        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user', 'moderator'])->where(['id'=> $id])->orderBy('id', 'desc')->first();
         return response()->json($data, 200);
     }
 
