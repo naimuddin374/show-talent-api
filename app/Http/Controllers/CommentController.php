@@ -29,15 +29,44 @@ class CommentController extends Controller
     }
 
 
-    public function approve($id)
+    public function approve(Request $request, $id)
     {
-        $data = CommentModel::where('id', $id)->update(['status' => 1]);
+        $auth = auth()->user();
+        $post = $request->all();
+        $data = [
+            "status" => 1,
+            "admin_id" => $auth['id'],
+            "reject_note" => null
+        ];
+        $row = CommentModel::findOrFail($id);
+        $row->update($data);
         return response()->json(["message" => "Approve successful."], 201);
     }
-    public function reject($id)
+    public function reject(Request $request, $id)
     {
-        $data = CommentModel::where('id', $id)->update(['status' => 2]);
-        return response()->json(["message" => "Rejected successful."], 201);
+        $auth = auth()->user();
+        $post = $request->all();
+        $data = [
+            "status" => 2,
+            "reject_note" => $post['reject_note'],
+            "admin_id" => $auth['id'],
+        ];
+        $row = CommentModel::findOrFail($id);
+        $row->update($data);
+        return response()->json(["message" => "Rejected successfully."], 201);
+    }
+    public function unpublish(Request $request, $id)
+    {
+        $auth = auth()->user();
+        $post = $request->all();
+        $data = [
+            "status" => 3,
+            "admin_id" => $auth['id'],
+            "reject_note" => null
+        ];
+        $row = CommentModel::findOrFail($id);
+        $row->update($data);
+        return response()->json(["message" => "Unpublish successful."], 201);
     }
 
 

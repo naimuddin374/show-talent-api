@@ -60,7 +60,19 @@ class ChapterController extends Controller
         $row->update($data);
         return response()->json(["message" => "Rejected successfully."], 201);
     }
-
+    public function unpublish(Request $request, $id)
+    {
+        $auth = auth()->user();
+        $post = $request->all();
+        $data = [
+            "status" => 3,
+            "admin_id" => $auth['id'],
+            "reject_note" => null
+        ];
+        $row = ChapterModel::findOrFail($id);
+        $row->update($data);
+        return response()->json(["message" => "Unpublish successful."], 201);
+    }
 
     public function store(Request $request)
     {

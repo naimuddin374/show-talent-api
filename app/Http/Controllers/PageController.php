@@ -19,7 +19,7 @@ class PageController extends Controller
 
     public function view()
     {
-        $data = PageModel::with(['user', 'category'])->orderBy('id', 'DESC')->get();
+        $data = PageModel::with(['user', 'category'])->where('status', 1)->orderBy('id', 'DESC')->get();
         return response()->json($data, 200);
     }
 
@@ -35,6 +35,46 @@ class PageController extends Controller
     {
         $data = PageModel::with(['user', 'category'])->where('user_id', $id)->orderBy('id', 'DESC')->get();
         return response()->json($data, 200);
+    }
+
+    public function approve(Request $request, $id)
+    {
+        $auth = auth()->user();
+        $post = $request->all();
+        $data = [
+            "status" => 1,
+            "admin_id" => $auth['id'],
+            "reject_note" => null
+        ];
+        $row = PageModel::findOrFail($id);
+        $row->update($data);
+        return response()->json(["message" => "Approve successful."], 201);
+    }
+    public function reject(Request $request, $id)
+    {
+        $auth = auth()->user();
+        $post = $request->all();
+        $data = [
+            "status" => 2,
+            "reject_note" => $post['reject_note'],
+            "admin_id" => $auth['id'],
+        ];
+        $row = PageModel::findOrFail($id);
+        $row->update($data);
+        return response()->json(["message" => "Rejected successfully."], 201);
+    }
+    public function unpublish(Request $request, $id)
+    {
+        $auth = auth()->user();
+        $post = $request->all();
+        $data = [
+            "status" => 3,
+            "admin_id" => $auth['id'],
+            "reject_note" => null
+        ];
+        $row = PageModel::findOrFail($id);
+        $row->update($data);
+        return response()->json(["message" => "Unpublish successful."], 201);
     }
 
     public function store(Request $request)
@@ -66,8 +106,8 @@ class PageController extends Controller
             \Image::make($image)->save('images/'.$name);
             $imgFile = 'images/'.$name;
         }
-        PageModel::create($data)->id;
-        return response()->json(["message" => "Created successful."], 201);
+        $id = PageModel::create($data)->id;
+        return response()->json(["message" => "Created successful.", "insertId" => $id], 201);
     }
 
 
@@ -75,7 +115,6 @@ class PageController extends Controller
     {
         $post = $request->all();
         $data = [
-            "status" => $post['status'],
             "name" => $post['name'],
             "email" => $post['email'],
             "contact" => $post['contact'],

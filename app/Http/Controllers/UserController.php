@@ -31,6 +31,11 @@ class UserController extends Controller
         return response()->json($data, 200);
     }
 
+    public function getTopTalentList(){
+        $data = UserModel::orderBy('points', 'DESC')->limit(5)->get();
+        return response()->json($data, 200);
+    }
+
 
     public function store(Request $request)
     {

@@ -40,6 +40,13 @@ class FollowerController extends Controller
         return response()->json(['following' => $following, 'followers' => $followers], 200);
     }
 
+    public function getFollowerList($id, $isPage)
+    {
+        $following = FollowerModel::with(['user'])->where(['user_id' => $id, 'is_page' => $isPage])->get();
+        $followers = FollowerModel::with(['user'])->where(['profile_id' => $id, 'is_page' => $isPage])->get();
+        return response()->json(['following' => $following, 'followers' => $followers], 200);
+    }
+
     public function store(Request $request)
     {
         $post = $request->all();

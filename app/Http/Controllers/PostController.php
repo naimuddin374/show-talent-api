@@ -43,7 +43,7 @@ class PostController extends Controller
 
     public function getByPage($id)
     {
-        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user'])->where(['posts.page_id' => $id, 'status' => 1])->orderBy('id', 'desc')->get();
+        $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user'])->where(['page_id' => $id, 'status' => 1])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
@@ -72,6 +72,29 @@ class PostController extends Controller
         $row = PostModel::findOrFail($id);
         $row->update($data);
         return response()->json(["message" => "Rejected successfully."], 201);
+    }
+    public function unpublish(Request $request, $id)
+    {
+        $auth = auth()->user();
+        $post = $request->all();
+        $data = [
+            "status" => 3,
+            "admin_id" => $auth['id'],
+            "reject_note" => null
+        ];
+        $row = PostModel::findOrFail($id);
+        $row->update($data);
+        return response()->json(["message" => "Unpublish successful."], 201);
+    }
+    public function editorPickHandle(Request $request, $id)
+    {
+        $post = $request->all();
+        $data = [
+            "is_editor" => $post['is_editor'],
+        ];
+        $row = PostModel::findOrFail($id);
+        $row->update($data);
+        return response()->json(["message" => "Editor update successful."], 201);
     }
 
     public function store(Request $request)

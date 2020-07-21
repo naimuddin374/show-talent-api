@@ -20,19 +20,23 @@ class EbookController extends Controller
     public function view()
     {
         $data = EbookModel::with(['user', 'page', 'chapter', 'category', 'comments.likes'])->where(['status' => 1])->orderBy('id', 'desc')->get();
+
+    //    $data = EbookModel::with(['user', 'page', 'category', 'comments.likes'])->with(['chapter' => function($q) {
+    //         $q->where('status', '=', 1);
+    //     }])->where(['status' => 1])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
     public function detail($id)
     {
-        $data = EbookModel::with(['user', 'page', 'chapter', 'category', 'comments'])->where(['id' => $id])->orderBy('id', 'desc')->first();
+        $data = EbookModel::with(['user', 'page', 'chapter', 'category', 'comments.user', 'comments.likes'])->where(['id' => $id])->orderBy('id', 'desc')->first();
         return response()->json($data, 200);
     }
 
 
     public function viewByJoinId($id)
     {
-        $data = EbookModel::with(['user', 'page', 'chapter', 'category', 'comments'])->where(['user_id' => $id, 'status' => 1])->orderBy('id', 'desc')->get();
+        $data = EbookModel::with(['user', 'page', 'chapter', 'category', 'comments.user'])->where(['user_id' => $id, 'status' => 1])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
@@ -61,6 +65,19 @@ class EbookController extends Controller
         $row = EbookModel::findOrFail($id);
         $row->update($data);
         return response()->json(["message" => "Rejected successfully."], 201);
+    }
+    public function unpublish(Request $request, $id)
+    {
+        $auth = auth()->user();
+        $post = $request->all();
+        $data = [
+            "status" => 3,
+            "admin_id" => $auth['id'],
+            "reject_note" => null
+        ];
+        $row = EbookModel::findOrFail($id);
+        $row->update($data);
+        return response()->json(["message" => "Unpublish successful."], 201);
     }
 
 

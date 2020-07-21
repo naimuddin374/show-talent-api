@@ -11,43 +11,60 @@ class PostCommentController extends Controller
 {
     public function adminView()
     {
-        $data = PostCommentModel::leftJoin('users', 'users.id', '=', 'comments.user_id')
-                ->leftJoin('posts', 'posts.id', '=', 'comments.post_id')
-                ->select('users.name as user_name', 'posts.title as post_title', 'comments.*')
-                ->orderBy('comments.id', 'DESC')
-                ->get();
+        $data = PostCommentModel::orderBy('id', 'DESC')->get();
         return response()->json($data, 200);
     }
 
-
     public function view()
     {
-        $data = PostCommentModel::leftJoin('users', 'users.id', '=', 'comments.user_id')
-                ->leftJoin('posts', 'posts.id', '=', 'comments.post_id')
-                ->select('users.name as user_name', 'posts.title as post_title', 'comments.*')
-                ->orderBy('comments.id', 'DESC')
-                ->where('comments.status', 1)
-                ->get();
+        $data = PostCommentModel::orderBy('id', 'DESC')->get();
         return response()->json($data, 200);
     }
 
     public function viewByJoinId($id)
     {
         $data = PostCommentModel::with(['user'])->where(['post_id'=> $id])->get();
-        // $data = PostCommentModel::where('post_id', $id)->get();
         return response()->json($data, 200);
     }
 
-
-    public function approve($id)
+    public function approve(Request $request, $id)
     {
-        $data = PostCommentModel::where('id', $id)->update(['status' => 1]);
+        $auth = auth()->user();
+        $post = $request->all();
+        $data = [
+            "status" => 1,
+            "admin_id" => $auth['id'],
+            "reject_note" => null
+        ];
+        $row = PostCommentModel::findOrFail($id);
+        $row->update($data);
         return response()->json(["message" => "Approve successful."], 201);
     }
-    public function reject($id)
+    public function reject(Request $request, $id)
     {
-        $data = PostCommentModel::where('id', $id)->update(['status' => 2]);
-        return response()->json(["message" => "Rejected successful."], 201);
+        $auth = auth()->user();
+        $post = $request->all();
+        $data = [
+            "status" => 2,
+            "reject_note" => $post['reject_note'],
+            "admin_id" => $auth['id'],
+        ];
+        $row = PostCommentModel::findOrFail($id);
+        $row->update($data);
+        return response()->json(["message" => "Rejected successfully."], 201);
+    }
+    public function unpublish(Request $request, $id)
+    {
+        $auth = auth()->user();
+        $post = $request->all();
+        $data = [
+            "status" => 3,
+            "admin_id" => $auth['id'],
+            "reject_note" => null
+        ];
+        $row = PostCommentModel::findOrFail($id);
+        $row->update($data);
+        return response()->json(["message" => "Unpublish successful."], 201);
     }
 
 

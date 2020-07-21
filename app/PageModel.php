@@ -9,7 +9,7 @@ use App\CategoryModel;
 class PageModel extends Model
 {
     protected $table = 'pages';
-    protected $fillable = ['user_id', 'name', 'email', 'contact', 'image', 'category_id', 'creation_date', 'expiration_date', 'view', 'follow', 'status', 'bio'];
+    protected $fillable = ['user_id', 'name', 'email', 'contact', 'image', 'category_id', 'creation_date', 'expiration_date', 'view', 'follow', 'status', 'bio', 'admin_id', 'reject_note', 'points'];
 
 
     public function user(){
