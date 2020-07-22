@@ -29,7 +29,13 @@ class FollowerController extends Controller
 
     public function viewByJoinId($id)
     {
-        $data = FollowerModel::where('profile_id', $id)->get();
+        $data = FollowerModel::where('user_id', $id)->get();
+        return response()->json($data, 200);
+    }
+
+    public function getProfileFollower($profileId, $isPage)
+    {
+        $data = FollowerModel::where(['profile_id' => $profileId, 'is_page' => $isPage])->get();
         return response()->json($data, 200);
     }
 

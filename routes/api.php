@@ -58,6 +58,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
         Route::put("{$key}/approve/{id}", "$value@approve");
         Route::put("{$key}/reject/{id}", "$value@reject");
         Route::put("{$key}/unpublished/{id}", "$value@unpublish");
+        Route::get("{$key}/read/all", "$value@readAll");
     }
     Route::get("admin/get-post/{type}", "PostController@postShowByType");
     Route::put("editor/pick/{id}", "PostController@editorPickHandle");
@@ -68,9 +69,14 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get("following/follower/{id}/{isPage}", "FollowerController@gerFollowerFollowing");
     Route::get("followers/{id}/{isPage}", "FollowerController@getFollowerList");
 
+    Route::get("profile/follower/{profileId}/{isPage}", "FollowerController@getProfileFollower");
+
     Route::put("ebook/cover/photo/{id}", "EbookController@uploadCoverPhoto");
     Route::get("admin/pending/count", "AdminController@countPending");
     Route::get("top/talents", "UserController@getTopTalentList");
+
+    Route::get("unread/all/posts", "ProfileController@getAllUnread");
+    Route::get("read/all/posts", "ProfileController@getAllRead");
 });
 
 

@@ -27,7 +27,7 @@ class UserController extends Controller
 
     public function detail($id)
     {
-        $data = UserModel::leftJoin('user_infos', 'user_infos.user_id', '=', 'users.id')->select('user_infos.*', 'users.*')->where('users.id', $id)->first();
+        $data = UserModel::with(['userInfo', 'education', 'experience', 'follower', 'following.user'])->where(['id' => $id])->first();
         return response()->json($data, 200);
     }
 

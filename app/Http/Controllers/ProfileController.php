@@ -6,11 +6,53 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\UserModel;
 use App\UserInfoModel;
+use App\ClassifiedModel;
+use App\PostModel;
+use App\EbookModel;
+use App\ChapterModel;
+use App\CommentModel;
+use App\PostCommentModel;
+use App\PageModel;
 use File;
 
 
 class ProfileController extends Controller
 {
+    public function getAllUnread(){
+        $userId = auth()->user()['id'];
+        $classified = ClassifiedModel::where(['user_id' => $userId, 'is_unread' => 1])->get();
+        $post = PostModel::where(['user_id' => $userId, 'is_unread' => 1])->get();
+        $ebook = EbookModel::where(['user_id' => $userId, 'is_unread' => 1])->get();
+        $chapter = ChapterModel::where(['is_unread' => 1])->get();
+        $comment = CommentModel::where(['user_id' => $userId, 'is_unread' => 1])->get();
+        $postComment = PostCommentModel::where(['user_id' => $userId, 'is_unread' => 1])->get();
+        $page = PageModel::where(['user_id' => $userId, 'is_unread' => 1])->get();
+
+        $res = array(
+            'classified' => $classified,
+            'post' => $post,
+            'ebook' => $ebook,
+            'chapter' => $chapter,
+            'comment' => $comment,
+            'postComment' => $postComment,
+            'page' => $page,
+        );
+
+        return response()->json($res, 200);
+    }
+
+    public function getAllRead(){
+        $userId = auth()->user()['id'];
+        ClassifiedModel::where(['user_id' => $userId, 'is_unread' => 1])->update(['is_unread' => 0]);
+        PostModel::where(['user_id' => $userId, 'is_unread' => 1])->update(['is_unread' => 0]);
+        EbookModel::where(['user_id' => $userId, 'is_unread' => 1])->update(['is_unread' => 0]);
+        ChapterModel::where(['is_unread' => 1])->update(['is_unread' => 0]);
+        CommentModel::where(['user_id' => $userId, 'is_unread' => 1])->update(['is_unread' => 0]);
+        PostCommentModel::where(['user_id' => $userId, 'is_unread' => 1])->update(['is_unread' => 0]);
+        PageModel::where(['user_id' => $userId, 'is_unread' => 1])->update(['is_unread' => 0]);
+
+        return response()->json(['message' => 'Make all read'], 200);
+    }
 
      public function getAuthUserInfo(){
          $auth = auth()->user();

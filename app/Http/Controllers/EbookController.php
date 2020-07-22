@@ -47,7 +47,8 @@ class EbookController extends Controller
         $data = [
             "status" => 1,
             "admin_id" => $auth['id'],
-            "reject_note" => null
+            "reject_note" => null,
+            'is_unread' => 1
         ];
         $row = EbookModel::findOrFail($id);
         $row->update($data);
@@ -61,6 +62,7 @@ class EbookController extends Controller
             "status" => 2,
             "admin_id" => $auth['id'],
             "reject_note" => $post['reject_note'],
+            'is_unread' => 1
         ];
         $row = EbookModel::findOrFail($id);
         $row->update($data);
@@ -73,11 +75,17 @@ class EbookController extends Controller
         $data = [
             "status" => 3,
             "admin_id" => $auth['id'],
-            "reject_note" => null
+            "reject_note" => null,
+            'is_unread' => 1
         ];
         $row = EbookModel::findOrFail($id);
         $row->update($data);
         return response()->json(["message" => "Unpublish successful."], 201);
+    }
+    public function readAll()
+    {
+        EbookModel::where(['is_unread' => 1])->update(['is_unread' => 0]);
+        return response()->json(["message" => "Read successful."], 201);
     }
 
 

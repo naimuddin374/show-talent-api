@@ -25,10 +25,10 @@ class PageController extends Controller
 
     public function detail($id)
     {
-        $data = PageModel::with(['user', 'category'])->where('id', $id)->first();
-        $following = FollowerModel::where(['user_id' => $id, 'is_page' => 1])->count();
-        $followers = FollowerModel::where(['profile_id' => $id, 'is_page' => 1])->count();
-        return response()->json(['pageInfo' => $data, 'following' => $following, 'followers' => $followers], 200);
+        $data = PageModel::with(['user', 'category', 'follower'])->where('id', $id)->first();
+        // $following = FollowerModel::where(['user_id' => $id, 'is_page' => 1])->count();
+        // $followers = FollowerModel::where(['profile_id' => $id, 'is_page' => 1])->count();
+        return response()->json($data, 200);
     }
 
     public function viewByJoinId($id)
@@ -44,7 +44,8 @@ class PageController extends Controller
         $data = [
             "status" => 1,
             "admin_id" => $auth['id'],
-            "reject_note" => null
+            "reject_note" => null,
+            'is_unread' => 1
         ];
         $row = PageModel::findOrFail($id);
         $row->update($data);
@@ -58,6 +59,7 @@ class PageController extends Controller
             "status" => 2,
             "reject_note" => $post['reject_note'],
             "admin_id" => $auth['id'],
+            'is_unread' => 1
         ];
         $row = PageModel::findOrFail($id);
         $row->update($data);
@@ -70,11 +72,17 @@ class PageController extends Controller
         $data = [
             "status" => 3,
             "admin_id" => $auth['id'],
-            "reject_note" => null
+            "reject_note" => null,
+            'is_unread' => 1
         ];
         $row = PageModel::findOrFail($id);
         $row->update($data);
         return response()->json(["message" => "Unpublish successful."], 201);
+    }
+    public function readAll()
+    {
+        PageModel::where(['is_unread' => 1])->update(['is_unread' => 0]);
+        return response()->json(["message" => "Read successful."], 201);
     }
 
     public function store(Request $request)
