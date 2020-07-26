@@ -27,14 +27,13 @@ class CountryController extends Controller
         $post = $request->all();
         $validator = Validator::make($post, [
             'name' => 'required|string',
-            'status' => 'required|numeric',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 406);
         }
         $data = [
             "name" => $post['name'],
-            "status" => $post['status'],
+            "status" => 1,
         ];
         CountryModel::create($data)->id;
         return response()->json(["message" => "Created successful."], 201);
@@ -46,7 +45,6 @@ class CountryController extends Controller
         $post = $request->all();
         $data = [
             "name" => $post['name'],
-            "status" => $post['status'],
         ];
         $row = CountryModel::findOrFail($id);
         $row->update($data);

@@ -20,19 +20,17 @@ class ProfileController extends Controller
 {
     public function getAllUnread(){
         $userId = auth()->user()['id'];
-        $classified = ClassifiedModel::where(['user_id' => $userId, 'is_unread' => 1])->get();
-        $post = PostModel::where(['user_id' => $userId, 'is_unread' => 1])->get();
-        $ebook = EbookModel::where(['user_id' => $userId, 'is_unread' => 1])->get();
-        $chapter = ChapterModel::where(['is_unread' => 1])->get();
-        $comment = CommentModel::where(['user_id' => $userId, 'is_unread' => 1])->get();
-        $postComment = PostCommentModel::where(['user_id' => $userId, 'is_unread' => 1])->get();
-        $page = PageModel::where(['user_id' => $userId, 'is_unread' => 1])->get();
+        $classified = ClassifiedModel::where(['user_id' => $userId])->whereNotIn('status', [0])->get();
+        $post = PostModel::where(['user_id' => $userId])->whereNotIn('status', [0])->get();
+        $ebook = EbookModel::where(['user_id' => $userId])->whereNotIn('status', [0])->get();
+        $comment = CommentModel::where(['user_id' => $userId])->whereNotIn('status', [0])->get();
+        $postComment = PostCommentModel::where(['user_id' => $userId])->whereNotIn('status', [0])->get();
+        $page = PageModel::where(['user_id' => $userId])->whereNotIn('status', [0])->get();
 
         $res = array(
             'classified' => $classified,
             'post' => $post,
             'ebook' => $ebook,
-            'chapter' => $chapter,
             'comment' => $comment,
             'postComment' => $postComment,
             'page' => $page,
@@ -41,12 +39,11 @@ class ProfileController extends Controller
         return response()->json($res, 200);
     }
 
-    public function getAllRead(){
+    public function changeAllRead(){
         $userId = auth()->user()['id'];
         ClassifiedModel::where(['user_id' => $userId, 'is_unread' => 1])->update(['is_unread' => 0]);
         PostModel::where(['user_id' => $userId, 'is_unread' => 1])->update(['is_unread' => 0]);
         EbookModel::where(['user_id' => $userId, 'is_unread' => 1])->update(['is_unread' => 0]);
-        ChapterModel::where(['is_unread' => 1])->update(['is_unread' => 0]);
         CommentModel::where(['user_id' => $userId, 'is_unread' => 1])->update(['is_unread' => 0]);
         PostCommentModel::where(['user_id' => $userId, 'is_unread' => 1])->update(['is_unread' => 0]);
         PageModel::where(['user_id' => $userId, 'is_unread' => 1])->update(['is_unread' => 0]);
@@ -124,6 +121,19 @@ class ProfileController extends Controller
         }
         $row->update(['image' => $imgFile]);
         return response()->json(["message" => "Updated successful.", 'image' => $imgFile], 201);
+    }
+
+    public function deleteProfilePic($id)
+    {
+        $row = UserModel::findOrFail($id);
+
+        if(File::exists($row->image))
+        {
+            File::delete($row->image);
+        }
+        
+        $row->update(['image' => null]);
+        return response()->json(["message" => "Deleted successful."], 201);
     }
 
 }

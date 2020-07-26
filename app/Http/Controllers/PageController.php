@@ -155,11 +155,31 @@ class PageController extends Controller
         return response()->json(["message" => "Updated successful."], 201);
     }
 
-
     public function delete($id)
     {
         $row = PageModel::findOrFail($id);
+
+        $image_path = $row->image;
+        if(File::exists($image_path) && @$imgFile)
+        {
+            File::delete($image_path);
+        }
+        
         $row->delete();
+        return response()->json(["message" => "Deleted successful."], 201);
+    }
+
+    public function deleteProfilePic($id)
+    {
+        $row = PageModel::findOrFail($id);
+
+        $image_path = $row->image;
+        if(File::exists($image_path))
+        {
+            File::delete($image_path);
+        }
+        
+        $row->update(['image' => null]);
         return response()->json(["message" => "Deleted successful."], 201);
     }
 }

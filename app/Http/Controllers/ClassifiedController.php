@@ -134,7 +134,7 @@ class ClassifiedController extends Controller
                 ClassifiedGalleryModel::create(['classified_id' => $id, 'image' => 'images/classified/'.$name]);
             }
         }
-        return response()->json(["message" => "Created successful."], 201);
+        return response()->json(["message" => "Your classified has been submitted successfully, it's pending for admin approval."], 201);
     }
 
 
@@ -150,6 +150,7 @@ class ClassifiedController extends Controller
             "price" => $post['price'],
             "currency" => $post['currency'],
             "address" => $post['address'],
+            "status" => 0
         ];
 
         $row = ClassifiedModel::findOrFail($id);
@@ -168,7 +169,7 @@ class ClassifiedController extends Controller
             File::delete($image_path);
         }
         $row->update($data);
-        return response()->json(["message" => "Updated successful."], 201);
+        return response()->json(["message" => "Your classified has been updated successfully, it's pending for admin approval."], 201);
     }
 
     public function delete($id)

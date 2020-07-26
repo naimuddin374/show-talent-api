@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\ChapterModel;
+use App\EbookModel;
 use File;
 use PDF;
 
@@ -100,10 +101,14 @@ class ChapterController extends Controller
             "description" => $post['description'],
         ];
         $id = ChapterModel::create($data)->id;
-        if($id){
-            // $this->makePDF($post['ebook_id']);
+        if($id && @$post['isDraft'] == 1){
+            EbookModel::where(['id' => $post['ebook_id']])->update(['status' => 5]);
+            return response()->json(["message" => "Save as draft successfully."], 201);
+        }else{
+            EbookModel::where(['id' => $post['ebook_id']])->update(['status' => 0]);
+            return response()->json(["message" => "Submit for review successfully."], 201);
         }
-        return response()->json(["message" => "Created successful."], 201);
+        return response()->json(["message" => "Submit for review successfully."], 201);
     }
 
 

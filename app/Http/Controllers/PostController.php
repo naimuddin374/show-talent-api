@@ -136,7 +136,7 @@ class PostController extends Controller
         }
 
         PostModel::create($data);
-        return response()->json(["message" => "Created successful.", 'post'=> $data], 201);
+        return response()->json(["message" => "Your post has been submitted successfully, it's pending for admin approval.", 'post'=> $data], 201);
     }
 
 
@@ -150,6 +150,7 @@ class PostController extends Controller
             "description" => $post['description'],
             "newslink" => @$post['newslink'],
             "video" => @$post['video'],
+            'status' => 0
         ];
         $row = PostModel::findOrFail($id);
 
@@ -168,7 +169,7 @@ class PostController extends Controller
 
 
         $row->update($data);
-        return response()->json(["message" => "Updated successful."], 201);
+        return response()->json(["message" => "Your post has been updated successfully, it's pending for admin approval."], 201);
     }
 
 

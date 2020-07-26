@@ -13,7 +13,7 @@ class EbookController extends Controller
 {
     public function adminView()
     {
-        $data = EbookModel::with(['user', 'page', 'chapter', 'category'])->orderBy('id', 'desc')->get();
+        $data = EbookModel::with(['user', 'page', 'chapter', 'category'])->where(['status !=' => 5])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
@@ -112,6 +112,7 @@ class EbookController extends Controller
             "summary" => $post['summary'],
             "author_summary" => $post['author_summary'],
             "preface" => $post['preface'],
+            'status' => 5
         ];
         $id = EbookModel::create($data)->id;
         return response()->json(["message" => "Created successful.", 'id' => $id], 201);
@@ -129,6 +130,7 @@ class EbookController extends Controller
             "summary" => $post['summary'],
             "author_summary" => $post['author_summary'],
             "preface" => $post['preface'],
+            'status' => 0
         ];
 
         $row = EbookModel::findOrFail($id);

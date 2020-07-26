@@ -52,8 +52,6 @@ class EduInfoController extends Controller
             "status" => $post['status'],
             "degree" => $post['degree'],
             "institute" => $post['institute'],
-            "start_date" => $post['start_date'],
-            "end_date" => $post['end_date'],
             "passing_year" => $post['passing_year'],
         ];
         EduInfoModel::create($data)->id;
@@ -68,8 +66,6 @@ class EduInfoController extends Controller
             "status" => $post['status'],
             "degree" => $post['degree'],
             "institute" => $post['institute'],
-            "start_date" => $post['start_date'],
-            "end_date" => $post['end_date'],
             "passing_year" => $post['passing_year'],
         ];
         $row = EduInfoModel::findOrFail($id);

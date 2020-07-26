@@ -76,7 +76,10 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get("top/talents", "UserController@getTopTalentList");
 
     Route::get("unread/all/posts", "ProfileController@getAllUnread");
-    Route::get("read/all/posts", "ProfileController@getAllRead");
+    Route::get("read/all/posts", "ProfileController@changeAllRead");
+
+    Route::delete("profile/image/remove/{id}", "ProfileController@deleteProfilePic");
+    Route::delete("page/image/remove/{id}", "PageController@deleteProfilePic");
 });
 
 
