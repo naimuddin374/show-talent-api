@@ -20,25 +20,25 @@ class ClassifiedController extends Controller
 
     public function view()
     {
-        $data = ClassifiedModel::orderBy('id', 'DESC')->where(['status' => 1])->get();
+        $data = ClassifiedModel::with(['city'])->orderBy('id', 'DESC')->where(['status' => 1])->get();
         return response()->json($data, 200);
     }
 
     public function detail($id)
     {
-        $data = ClassifiedModel::with(['user', 'category', 'page'])->where(['id' => $id])->orderBy('id', 'desc')->first();
+        $data = ClassifiedModel::with(['user', 'category', 'page', 'city'])->where(['id' => $id])->orderBy('id', 'desc')->first();
         return response()->json($data, 200);
     }
 
     public function viewByJoinId($id)
     {
-        $data = ClassifiedModel::with(['user', 'category', 'page'])->where(['user_id' => $id, 'page_id' => 0, 'status' => 1])->orderBy('id', 'desc')->get();
+        $data = ClassifiedModel::with(['user', 'category', 'page', 'city'])->where(['user_id' => $id, 'page_id' => 0, 'status' => 1])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
     public function getPagePost($id)
     {
-        $data = ClassifiedModel::with(['user', 'category', 'page'])->where(['page_id'=> $id, 'status' => 1])->orderBy('id', 'desc')->get();
+        $data = ClassifiedModel::with(['user', 'category', 'page', 'city'])->where(['page_id'=> $id, 'status' => 1])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
     public function approve(Request $request, $id)
@@ -112,6 +112,7 @@ class ClassifiedController extends Controller
             "price" => $post['price'],
             "currency" => $post['currency'],
             "address" => $post['address'],
+            "city_id" => $post['city_id'],
         ];
 
 
@@ -150,6 +151,7 @@ class ClassifiedController extends Controller
             "price" => $post['price'],
             "currency" => $post['currency'],
             "address" => $post['address'],
+            "city_id" => $post['city_id'],
             "status" => 0
         ];
 

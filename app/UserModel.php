@@ -11,7 +11,7 @@ use App\WorkExpModel;
 class UserModel extends Model
 {
     protected $table = 'users';
-    protected $fillable = ['full_name', 'name', 'contact', 'email', 'password', 'image', 'type', 'status', 'balance', 'points'];
+    protected $fillable = ['full_name', 'name', 'contact', 'email', 'password', 'image', 'type', 'status', 'balance', 'points', 'reset_code'];
 
     public function userInfo(){
         return $this->hasMany(UserInfoModel::class, 'user_id');

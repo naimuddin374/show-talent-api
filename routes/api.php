@@ -88,5 +88,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
 Route::post("auth/registration", "UserController@store");
 Route::post("auth/login", "AuthController@authenticate");
 Route::post("auth/admin/login", "AuthController@adminAuthenticate");
+Route::post("auth/forgot/password", "AuthController@forgotPassword");
+Route::post("auth/password/reset", "AuthController@resetPassword");
 // Route::get("test", "CategoryController@test");
 Route::get("test", "TestController@index");

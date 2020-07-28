@@ -10,7 +10,7 @@ class CityController extends Controller
 {
     public function adminView()
     {
-        $data = CityModel::orderBy('id', 'DESC')->get();
+        $data = CityModel::with(['country'])->orderBy('id', 'DESC')->get();
         return response()->json($data, 200);
     }
 
@@ -35,7 +35,6 @@ class CityController extends Controller
         $validator = Validator::make($post, [
             'name' => 'required|string',
             'country_id' => 'required|numeric',
-            'status' => 'required|numeric',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 406);
@@ -43,7 +42,7 @@ class CityController extends Controller
         $data = [
             "name" => $post['name'],
             "country_id" => $post['country_id'],
-            "status" => $post['status'],
+            "status" => 1,
         ];
         CityModel::create($data)->id;
         return response()->json(["message" => "Created successful."], 201);
@@ -56,7 +55,6 @@ class CityController extends Controller
         $data = [
             "name" => $post['name'],
             "country_id" => $post['country_id'],
-            "status" => $post['status'],
         ];
         $row = CityModel::findOrFail($id);
         $row->update($data);

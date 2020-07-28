@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Hash;
 use JWTFactory;
 use App\User;
 
-
 class AuthController extends Controller
 {
 
@@ -97,36 +96,42 @@ class AuthController extends Controller
         }
     }
 
-
     public function forgotPassword(Request $request)
     {
         $post = $request->all();
         $validator = Validator::make($post, [
-            "email" => "required|email",
+            "email" => "required",
         ]);
         if ($validator->fails()) {
             return back()->with($validator->errors());
         }
-        $data = User::where(["email" => $post["email"]])->get();
-        if(isset($data[0])){
-            foreach($data as $user){
-                $userKey = $this->encryptor("encrypt", $user->id);
-
-                $mailInfo = array();
-                $mailInfo['user_name'] = $user->name;
-                $mailInfo['user_email'] = $user->email;
-                $mailInfo['user_key'] = $userKey;
-
-                 Mail::send('forgot-password', $mailInfo, function($message) use ($data){
-                    $message->to($data['user_email']);
-                    // $message->to("naimuddin374@gmail.com");
-                    $message->subject("Forgot Password");
-                    $message->from('website@beatnik.technology');
-                });
-            }
-            return response()->json(["message" => "Email has been sent please check your email."], 200);
+        $sel_user = User::where(['email' => $post['email']])->first();
+        if(!$sel_user){
+            return response()->json(["message" => "Invalid email address."], 400);
+        }else if($sel_user->status == 0){
+            return response()->json(["message" => "Your account has been pending, please contact our support."], 400);
+        }else if($sel_user->status == 2){
+            return response()->json(["message" => "Your account has been blocked, please contact our support."], 400);
+        }else if($sel_user->status == 3){
+            return response()->json(["message" => "Your account has been rejected, please contact our support."], 400);
         }else{
-            return response()->json(["message" => "Invalid email."], 401);
+            $hash_key = $this->encryptor("encrypt", $sel_user->id);
+            User::where(['id' => $sel_user->id])->update(['reset_code' => $hash_key]);
+
+            $url = "http://showtalent.btlbd.tk/reset/password/{$hash_key}";
+            
+            $mailInfo = array();
+            $mailInfo['name'] = $sel_user->name;
+            $mailInfo['email'] = $sel_user->email;
+            $mailInfo['url'] = $url;
+            // return view('forgot-password')->with('mailData', $mailInfo);
+            Mail::send('forgot-password', $mailInfo, function($message) use ($mailInfo){
+                $message->to($mailInfo['email']);
+                // $message->to("naimuddin374@gmail.com");
+                $message->subject("Forgot Password");
+                $message->from('website@beatnik.technology');
+            });
+            return response()->json(["message" => "Please check your email and reset your password.", 'url' => $url], 200);
         }
     }
 
@@ -135,22 +140,16 @@ class AuthController extends Controller
         $post = $request->all();
         $validator = Validator::make($post, [
             "password" => "required",
-            "confirmPassword" => "required",
         ]);
         if ($validator->fails()) {
             return back()->with($validator->errors());
         }
-        $userId = $this->encryptor("decrypt", $post['userKey']);
-
-        $data = User::where(["id" => $userId])->get();
-        if(isset($data[0])){
-            foreach($data as $user){
-                $row = User::findOrFail($user->id);
-                $row->update(['password' => md5($post['confirmPassword'])]);
-            }
-            return response()->json(["message" => "Your password has been updated successful."], 201);
+        $sel_user = User::where('reset_code', $post['hash_key'])->first();
+        if(!$sel_user){
+            return response()->json(["message" => "Invalid Link."], 400);
         }else{
-            return response()->json(["message" => "Invalid Link."], 401);
+            User::where('id', $sel_user->id)->update(['password' => Hash::make($post['password']), 'reset_code' => NULL]);
+            return response()->json(["message" => "Your password has been updated successfully."], 201);
         }
     }
 
@@ -175,4 +174,6 @@ class AuthController extends Controller
         }
         return $output;
     }
+
+    
 }

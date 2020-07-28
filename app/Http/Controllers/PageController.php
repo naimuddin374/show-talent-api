@@ -97,9 +97,14 @@ class PageController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 406);
         }
-        $auth = auth()->user();
+        $userId = auth()->user()['id'];
+        $sel_page = PageModel::where(['name' => $post['name'], 'user_id' => $userId])->first();
+        if($sel_page){
+            return response()->json(["message" => "Page already exist."], 406);
+        }
+        
         $data = [
-            "user_id" => $auth['id'],
+            "user_id" => $userId,
             "name" => $post['name'],
             "email" => $post['email'],
             "contact" => $post['contact'],

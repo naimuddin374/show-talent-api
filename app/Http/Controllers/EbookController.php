@@ -13,7 +13,7 @@ class EbookController extends Controller
 {
     public function adminView()
     {
-        $data = EbookModel::with(['user', 'page', 'chapter', 'category'])->where(['status !=' => 5])->orderBy('id', 'desc')->get();
+        $data = EbookModel::with(['user', 'page', 'chapter', 'category'])->where('status', '!=',  5)->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
@@ -33,10 +33,15 @@ class EbookController extends Controller
         return response()->json($data, 200);
     }
 
-
     public function viewByJoinId($id)
     {
-        $data = EbookModel::with(['user', 'page', 'chapter', 'category', 'comments.user'])->where(['user_id' => $id, 'status' => 1])->orderBy('id', 'desc')->get();
+        $data = EbookModel::with(['user', 'page', 'chapter', 'category', 'comments.likes'])->where(['user_id' => $id, 'status' => 1])->orderBy('id', 'desc')->get();
+        return response()->json($data, 200);
+    }
+
+    public function getByPage($id)
+    {
+        $data = EbookModel::with(['user', 'page', 'chapter', 'category', 'comments.likes'])->where(['page_id' => $id, 'status' => 1])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
