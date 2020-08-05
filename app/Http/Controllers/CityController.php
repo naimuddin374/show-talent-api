@@ -21,10 +21,9 @@ class CityController extends Controller
         return response()->json($data, 200);
     }
 
-
     public function detail($id)
     {
-        $data = CityModel::where('id', $id)->first();
+        $data = CityModel::where('id', $id)->orderBy('name', 'ASC')->first();
         return response()->json($data, 200);
     }
 

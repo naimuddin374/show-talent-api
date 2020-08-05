@@ -13,7 +13,7 @@ use App\CommentModel;
 class EbookModel extends Model
 {
     protected $table = 'ebooks';
-    protected $fillable = ['category_id', 'user_id', 'page_id', 'name', 'author_name', 'publication_date', 'preface', 'summary', 'author_summary', 'preface', 'front_image', 'back_image', 'price', 'status', 'reject_note', 'reopen_note', 'admin_id', 'is_unread'];
+    protected $fillable = ['category_id', 'user_id', 'page_id', 'name', 'author_name', 'publication_date', 'summary', 'author_summary', 'preface', 'front_image', 'back_image', 'price', 'status', 'reject_note', 'reopen_note', 'admin_id', 'is_unread', 'points'];
 
     public function user(){
         return $this->belongsTo(UserModel::class);

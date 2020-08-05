@@ -12,7 +12,7 @@ use App\CityModel;
 class ClassifiedModel extends Model
 {
     protected $table = 'classifieds';
-    protected $fillable = ['user_id', 'page_id', 'type', 'category_id', 'contact', 'email', 'title', 'description', 'image', 'price', 'currency', 'address', 'status', 'admin_id', 'reject_note', 'is_unread', 'city_id'];
+    protected $fillable = ['user_id', 'page_id', 'type', 'category_id', 'contact', 'email', 'title', 'description', 'image', 'price', 'currency', 'address', 'status', 'admin_id', 'reject_note', 'is_unread', 'city_id', 'points'];
 
     public function user(){
         return $this->belongsTo(UserModel::class, 'user_id');

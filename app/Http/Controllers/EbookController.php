@@ -53,10 +53,13 @@ class EbookController extends Controller
             "status" => 1,
             "admin_id" => $auth['id'],
             "reject_note" => null,
-            'is_unread' => 1
+            'is_unread' => 1,
+            'points' => $post['points'],
         ];
         $row = EbookModel::findOrFail($id);
         $row->update($data);
+        addRewardPoint($row->user_id, @$post['points']);
+
         return response()->json(["message" => "Approve successful."], 201);
     }
     public function reject(Request $request, $id)
@@ -81,10 +84,14 @@ class EbookController extends Controller
             "status" => 3,
             "admin_id" => $auth['id'],
             "reject_note" => null,
-            'is_unread' => 1
+            'is_unread' => 1,
+            'points' => 0,
         ];
         $row = EbookModel::findOrFail($id);
         $row->update($data);
+        removeRewardPoint($row->user_id, $row->points);
+
+        
         return response()->json(["message" => "Unpublish successful."], 201);
     }
     public function readAll()

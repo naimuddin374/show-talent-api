@@ -10,11 +10,9 @@ use File;
 class TestController extends Controller
 {
     public function index(){
-
-        $data = EbookModel::with(['user', 'page', 'category', 'comments.likes'])->with(['chapter' => function($q) {
-            $q->where('status', '=', 1);
-        }])->where(['status' => 1])->orderBy('id', 'desc')->get();
-        return $data;
+        addRewardPoint(3, 10);
+        echo 'OK';
+        exit;
         return response()->json($data, 200);
     }
 }

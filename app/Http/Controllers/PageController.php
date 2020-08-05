@@ -13,13 +13,13 @@ class PageController extends Controller
 {
     public function adminView()
     {
-        $data = PageModel::with(['user', 'category'])->where('id', $id)->orderBy('id', 'DESC')->get();
+        $data = PageModel::with(['user', 'category', 'follower'])->orderBy('id', 'DESC')->get();
         return response()->json($data, 200);
     }
 
     public function view()
     {
-        $data = PageModel::with(['user', 'category'])->where('status', 1)->orderBy('id', 'DESC')->get();
+        $data = PageModel::with(['user', 'category', 'follower'])->where('status', 1)->orderBy('id', 'DESC')->get();
         return response()->json($data, 200);
     }
 
@@ -45,10 +45,14 @@ class PageController extends Controller
             "status" => 1,
             "admin_id" => $auth['id'],
             "reject_note" => null,
-            'is_unread' => 1
+            'is_unread' => 1,
+            'points' => $post['points'],
         ];
         $row = PageModel::findOrFail($id);
         $row->update($data);
+        addRewardPoint($row->user_id, @$post['points']);
+
+
         return response()->json(["message" => "Approve successful."], 201);
     }
     public function reject(Request $request, $id)
@@ -73,10 +77,13 @@ class PageController extends Controller
             "status" => 3,
             "admin_id" => $auth['id'],
             "reject_note" => null,
-            'is_unread' => 1
+            'is_unread' => 1,
+            'points' => 0,
         ];
         $row = PageModel::findOrFail($id);
         $row->update($data);
+        removeRewardPoint($row->user_id, $row->points);
+        
         return response()->json(["message" => "Unpublish successful."], 201);
     }
     public function readAll()

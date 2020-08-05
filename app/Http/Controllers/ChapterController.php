@@ -43,10 +43,14 @@ class ChapterController extends Controller
             "status" => 1,
             "admin_id" => $auth['id'],
             "reject_note" => null,
-            'is_unread' => 1
+            'is_unread' => 1,
+            'points' => $post['points'],
         ];
         $row = ChapterModel::findOrFail($id);
         $row->update($data);
+        $book = EbookModel::where('ebook_id', $row->ebook_id)->first();
+        addRewardPoint($book->user_id, @$post['points']);
+        
         return response()->json(["message" => "Approve successful."], 201);
     }
     public function reject(Request $request, $id)
@@ -71,10 +75,14 @@ class ChapterController extends Controller
             "status" => 3,
             "admin_id" => $auth['id'],
             "reject_note" => null,
-            'is_unread' => 1
+            'is_unread' => 1,
+            'points' => 0,
         ];
         $row = ChapterModel::findOrFail($id);
         $row->update($data);
+        $book = EbookModel::where('ebook_id', $row->ebook_id)->first();
+        removeRewardPoint($book->user_id, $row->points);
+
         return response()->json(["message" => "Unpublish successful."], 201);
     }
     public function readAll()

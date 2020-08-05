@@ -13,7 +13,7 @@ use App\PostCommentModel;
 class PostModel extends Model
 {
     protected $table = 'posts';
-    protected $fillable = ['user_id', 'type', 'category_id', 'page_id', 'title', 'description', 'newslink', 'video', 'image', 'status', 'reject_note', 'admin_id', 'is_editor', 'is_unread'];
+    protected $fillable = ['user_id', 'type', 'category_id', 'page_id', 'title', 'description', 'newslink', 'video', 'image', 'status', 'reject_note', 'admin_id', 'is_editor', 'is_unread', 'points'];
 
     public function user(){
         return $this->belongsTo(UserModel::class);

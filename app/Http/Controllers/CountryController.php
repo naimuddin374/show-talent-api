@@ -21,6 +21,12 @@ class CountryController extends Controller
         return response()->json($data, 200);
     }
 
+    public function detail($id)
+    {
+        $data = CountryModel::where('id', $id)->orderBy('name', 'ASC')->first();
+        return response()->json($data, 200);
+    }
+
 
     public function store(Request $request)
     {
