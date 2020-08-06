@@ -49,7 +49,7 @@ class ChapterController extends Controller
         $row = ChapterModel::findOrFail($id);
         $row->update($data);
         $book = EbookModel::where('ebook_id', $row->ebook_id)->first();
-        addRewardPoint($book->user_id, @$post['points']);
+        addRewardPoint($book->user_id, $book->page_id, @$post['points']);
         
         return response()->json(["message" => "Approve successful."], 201);
     }
@@ -81,7 +81,7 @@ class ChapterController extends Controller
         $row = ChapterModel::findOrFail($id);
         $row->update($data);
         $book = EbookModel::where('ebook_id', $row->ebook_id)->first();
-        removeRewardPoint($book->user_id, $row->points);
+        removeRewardPoint($book->user_id, $book->page_id, $row->points);
 
         return response()->json(["message" => "Unpublish successful."], 201);
     }

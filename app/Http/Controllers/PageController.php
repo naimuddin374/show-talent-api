@@ -50,7 +50,7 @@ class PageController extends Controller
         ];
         $row = PageModel::findOrFail($id);
         $row->update($data);
-        addRewardPoint($row->user_id, @$post['points']);
+        addRewardPoint($row->user_id, 0, @$post['points']);
 
 
         return response()->json(["message" => "Approve successful."], 201);
@@ -82,7 +82,7 @@ class PageController extends Controller
         ];
         $row = PageModel::findOrFail($id);
         $row->update($data);
-        removeRewardPoint($row->user_id, $row->points);
+        removeRewardPoint($row->user_id, 0, $row->points);
         
         return response()->json(["message" => "Unpublish successful."], 201);
     }

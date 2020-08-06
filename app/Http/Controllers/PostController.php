@@ -60,7 +60,7 @@ class PostController extends Controller
         ];
         $row = PostModel::findOrFail($id);
         $row->update($data);
-        addRewardPoint($row->user_id, @$post['points']);
+        addRewardPoint($row->user_id, $row->page_id, @$post['points']);
 
         return response()->json(["message" => "Approve successful."], 201);
     }
@@ -91,7 +91,7 @@ class PostController extends Controller
         ];
         $row = PostModel::findOrFail($id);
         $row->update($data);
-        removeRewardPoint($row->user_id, $row->points);
+        removeRewardPoint($row->user_id, $row->page_id, $row->points);
 
         return response()->json(["message" => "Unpublish successful."], 201);
     }
