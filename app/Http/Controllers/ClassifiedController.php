@@ -84,8 +84,8 @@ class ClassifiedController extends Controller
             'points' => 0,
         ];
         $row = ClassifiedModel::findOrFail($id);
-        $row->update($data);
         removeRewardPoint($row->user_id, $row->page_id, $row->points);
+        $row->update($data);
 
         return response()->json(["message" => "Unpublish successful."], 201);
     }

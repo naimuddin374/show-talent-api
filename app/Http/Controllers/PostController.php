@@ -87,11 +87,11 @@ class PostController extends Controller
             "admin_id" => $auth['id'],
             "reject_note" => null,
             'is_unread' => 1,
-            'points' => 1,
+            'points' => 0,
         ];
         $row = PostModel::findOrFail($id);
-        $row->update($data);
         removeRewardPoint($row->user_id, $row->page_id, $row->points);
+        $row->update($data);
 
         return response()->json(["message" => "Unpublish successful."], 201);
     }

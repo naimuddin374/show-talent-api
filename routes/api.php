@@ -39,11 +39,13 @@ Route::group(['middleware' => ['jwt.verify']], function() {
         'product-category' => 'ProductCatController',
         'review' => 'ReviewController',
         'comment' => 'CommentController',
-        'posted-ad' => 'AdController',
         'account' => 'AccountController',
         'post-like' => 'PostLikeController',
         'post-comment' => 'PostCommentController',
         'comment-like' => 'CommentLikeController',
+        'ads' => 'AdController',
+        'ad-audience' => 'AdAudienceController',
+        'ad-budget' => 'AdBudgetController',
     ];
    foreach ($arr as $key => $value) {
         Route::get("$key", "$value@view");

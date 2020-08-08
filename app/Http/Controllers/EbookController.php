@@ -88,8 +88,16 @@ class EbookController extends Controller
             'points' => 0,
         ];
         $row = EbookModel::findOrFail($id);
-        $row->update($data);
         removeRewardPoint($row->user_id, $row->page_id, $row->points);
+        $row->update($data);
+
+        $chapter = ChapterModel::where('ebook_id', $id)->get();
+        if($chapter){
+            foreach($chapter as $c){
+                removeRewardPoint($row->user_id, $row->page_id, $c->points);
+            }
+            ChapterModel::where('ebook_id', $id)->updated(['points' => 0]);
+        }
         
         return response()->json(["message" => "Unpublish successful."], 201);
     }
