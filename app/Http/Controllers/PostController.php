@@ -131,6 +131,7 @@ class PostController extends Controller
             "description" => $post['description'],
             "newslink" => @$post['newslink'],
             "video" => @$post['video'],
+            'created_at' => date('Y-m-d H:i:s')
         ];
 
        if(@$post['image'])

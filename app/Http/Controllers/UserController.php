@@ -60,6 +60,7 @@ class UserController extends Controller
             "password" => Hash::make($post['password']),
             "type" => $post['type'],
             "status" => $post['status'],
+            'created_at' => date('Y-m-d H:i:s')
         ];
         $id = UserModel::create($data)->id;
         if(@$post['dob']){

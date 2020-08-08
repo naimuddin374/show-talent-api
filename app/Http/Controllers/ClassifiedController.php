@@ -118,6 +118,7 @@ class ClassifiedController extends Controller
             "currency" => $post['currency'],
             "address" => $post['address'],
             "city_id" => $post['city_id'],
+            'created_at' => date('Y-m-d H:i:s')
         ];
 
 

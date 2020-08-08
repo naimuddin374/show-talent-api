@@ -117,6 +117,7 @@ class PageController extends Controller
             "contact" => $post['contact'],
             "category_id" => $post['category_id'],
             "bio" => $post['bio'],
+            'created_at' => date('Y-m-d H:i:s')
         ];
 
         if(@$post['image'])

@@ -20,12 +20,12 @@ class ProfileController extends Controller
 {
     public function getAllUnread(){
         $userId = auth()->user()['id'];
-        $classified = ClassifiedModel::where(['user_id' => $userId])->whereNotIn('status', [0])->get();
-        $post = PostModel::where(['user_id' => $userId])->whereNotIn('status', [0])->get();
-        $ebook = EbookModel::where(['user_id' => $userId])->whereNotIn('status', [0])->get();
-        $comment = CommentModel::where(['user_id' => $userId])->whereNotIn('status', [0])->get();
-        $postComment = PostCommentModel::where(['user_id' => $userId])->whereNotIn('status', [0])->get();
-        $page = PageModel::where(['user_id' => $userId])->whereNotIn('status', [0])->get();
+        $classified = ClassifiedModel::where(['user_id' => $userId])->whereNotIn('status', [0])->orderBy('id', 'DESC')->get();
+        $post = PostModel::where(['user_id' => $userId])->whereNotIn('status', [0])->orderBy('id', 'DESC')->get();
+        $ebook = EbookModel::where(['user_id' => $userId])->whereNotIn('status', [0])->orderBy('id', 'DESC')->get();
+        $comment = CommentModel::where(['user_id' => $userId])->whereNotIn('status', [0])->orderBy('id', 'DESC')->get();
+        $postComment = PostCommentModel::where(['user_id' => $userId])->whereNotIn('status', [0])->orderBy('id', 'DESC')->get();
+        $page = PageModel::where(['user_id' => $userId])->whereNotIn('status', [0])->orderBy('id', 'DESC')->get();
 
         $res = array(
             'classified' => $classified,

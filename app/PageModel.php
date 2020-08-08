@@ -10,7 +10,7 @@ use App\FollowerModel;
 class PageModel extends Model
 {
     protected $table = 'pages';
-    protected $fillable = ['user_id', 'name', 'email', 'contact', 'image', 'category_id', 'creation_date', 'expiration_date', 'view', 'follow', 'status', 'bio', 'admin_id', 'reject_note', 'points', 'is_unread'];
+    protected $fillable = ['user_id', 'name', 'email', 'contact', 'image', 'category_id', 'creation_date', 'expiration_date', 'view', 'follow', 'status', 'bio', 'admin_id', 'reject_note', 'points', 'is_unread', 'created_at'];
 
 
     public function user(){

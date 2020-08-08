@@ -131,7 +131,8 @@ class EbookController extends Controller
             "summary" => $post['summary'],
             "author_summary" => $post['author_summary'],
             "preface" => $post['preface'],
-            'status' => 5
+            'status' => 5,
+            'created_at' => date('Y-m-d H:i:s')
         ];
         $id = EbookModel::create($data)->id;
         return response()->json(["message" => "Created successful.", 'id' => $id], 201);

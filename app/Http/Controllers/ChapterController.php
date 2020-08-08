@@ -107,6 +107,7 @@ class ChapterController extends Controller
             "sequence" => $post['sequence'],
             "name" => $post['name'],
             "description" => $post['description'],
+            'created_at' => date('Y-m-d H:i:s')
         ];
         $id = ChapterModel::create($data)->id;
         if($id && @$post['isDraft'] == 1){

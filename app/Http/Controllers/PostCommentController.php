@@ -92,6 +92,7 @@ class PostCommentController extends Controller
             "status" => $post['status'],
             "comment" => strip_tags($post['comment']),
             "comment_id" => @$post['comment_id'],
+            'created_at' => date('Y-m-d H:i:s')
         ];
         PostCommentModel::create($data)->id;
         return response()->json(["message" => "Created successful."], 201);

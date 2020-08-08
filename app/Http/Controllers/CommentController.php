@@ -93,6 +93,7 @@ class CommentController extends Controller
             "ebook_id" => $post['ebook_id'],
             "rating" => $post['rating'],
             "comment" => strip_tags($post['comment']),
+            'created_at' => date('Y-m-d H:i:s')
         ];
         CommentModel::create($data)->id;
         return response()->json(["message" => "Created successful."], 201);
