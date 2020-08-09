@@ -48,8 +48,8 @@ class FollowerController extends Controller
 
     public function getFollowerList($id, $isPage)
     {
-        $following = FollowerModel::with(['user'])->where(['user_id' => $id, 'is_page' => $isPage])->get();
-        $followers = FollowerModel::with(['user'])->where(['profile_id' => $id, 'is_page' => $isPage])->get();
+        $following = FollowerModel::with(['user.experience'])->where(['user_id' => $id, 'is_page' => $isPage])->get();
+        $followers = FollowerModel::with(['user.experience'])->where(['profile_id' => $id, 'is_page' => $isPage])->get();
         return response()->json(['following' => $following, 'followers' => $followers], 200);
     }
 

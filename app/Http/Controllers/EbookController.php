@@ -27,6 +27,16 @@ class EbookController extends Controller
         return response()->json($data, 200);
     }
 
+    public function getDraftList($userId=0, $pageId=0){
+        $data = [];
+        if($userId){
+            $data = EbookModel::with(['user', 'page', 'category'])->where(['user_id' => $userId, 'page_id' => 0, 'status' => 5])->orderBy('id', 'desc')->get();
+        }else{
+            $data = EbookModel::with(['user', 'page', 'category'])->where(['page_id' => 0, 'status' => 5])->orderBy('id', 'desc')->get();
+        }
+        return response()->json($data, 200);
+    }
+
     public function detail($id)
     {
         $data = EbookModel::with(['user', 'page', 'chapter', 'category', 'comments.user', 'comments.likes'])->where(['id' => $id])->orderBy('id', 'desc')->first();
@@ -155,7 +165,7 @@ class EbookController extends Controller
 
         $row = EbookModel::findOrFail($id);
         $row->update($data);
-        return response()->json(["message" => "Updated successful."], 201);
+        return response()->json(["message" => "Submit for review successfully."], 201);
     }
 
 

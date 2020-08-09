@@ -82,6 +82,9 @@ Route::group(['middleware' => ['jwt.verify']], function() {
 
     Route::delete("profile/image/remove/{id}", "ProfileController@deleteProfilePic");
     Route::delete("page/image/remove/{id}", "PageController@deleteProfilePic");
+
+    // Get ebook draft list
+    Route::get("ebook/draft/list/{userId}/{pageId}", "EbookController@getDraftList");
 });
 
 
