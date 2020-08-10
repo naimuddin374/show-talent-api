@@ -65,6 +65,7 @@ class EbookController extends Controller
             "reject_note" => null,
             'is_unread' => 1,
             'points' => $post['points'],
+            'created_at' => date('Y-m-d H:i:s')
         ];
         $row = EbookModel::findOrFail($id);
         $row->update($data);
@@ -160,7 +161,6 @@ class EbookController extends Controller
             "summary" => $post['summary'],
             "author_summary" => $post['author_summary'],
             "preface" => $post['preface'],
-            'status' => 0
         ];
 
         $row = EbookModel::findOrFail($id);

@@ -57,6 +57,7 @@ class PostController extends Controller
             "reject_note" => null,
             'is_unread' => 1,
             'points' => $post['points'],
+            'created_at' => date('Y-m-d H:i:s')
         ];
         $row = PostModel::findOrFail($id);
         $row->update($data);

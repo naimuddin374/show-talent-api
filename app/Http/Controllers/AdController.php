@@ -43,6 +43,18 @@ class AdController extends Controller
         return response()->json($data, 200);
     }
 
+    public function getUserAdList($id)
+    {
+        $data = AdModel::with(['user', 'page', 'audience', 'budget'])->where(['user_id'=> $id, 'page_id' => 0])->orderBy('id', 'desc')->get();
+        return response()->json($data, 200);
+    }
+
+    public function viewPageAdList($id)
+    {
+        $data = AdModel::with(['user', 'page', 'audience', 'budget'])->where(['page_id' => $id])->orderBy('id', 'desc')->get();
+        return response()->json($data, 200);
+    }
+
     public function approve(Request $request, $id)
     {
         $auth = auth()->user();
@@ -102,6 +114,7 @@ class AdController extends Controller
         $post = $request->all();
         $validator = Validator::make($post, [
             'category_id' => 'required|numeric',
+            'placement' => 'required|numeric',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 406);
@@ -111,6 +124,7 @@ class AdController extends Controller
             "user_id" => $auth['id'],
             "category_id" => $post['category_id'],
             "page_id" => $post['page_id'],
+            "placement" => $post['placement'],
         ];
 
        if(@$post['image'])
@@ -132,6 +146,7 @@ class AdController extends Controller
         $post = $request->all();
         $data = [
             "category_id" => $post['category_id'],
+            "placement" => $post['placement'],
             'status' => 0
         ];
         $row = AdModel::findOrFail($id);

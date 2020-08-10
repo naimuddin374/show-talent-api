@@ -43,7 +43,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
         'post-like' => 'PostLikeController',
         'post-comment' => 'PostCommentController',
         'comment-like' => 'CommentLikeController',
-        'ads' => 'AdController',
+        'advartisment' => 'AdController',
         'ad-audience' => 'AdAudienceController',
         'ad-budget' => 'AdBudgetController',
     ];
@@ -75,7 +75,6 @@ Route::group(['middleware' => ['jwt.verify']], function() {
 
     Route::put("ebook/cover/photo/{id}", "EbookController@uploadCoverPhoto");
     Route::get("admin/pending/count", "AdminController@countPending");
-    Route::get("top/talents", "UserController@getTopTalentList");
 
     Route::get("unread/all/posts", "ProfileController@getAllUnread");
     Route::get("read/all/posts", "ProfileController@changeAllRead");
@@ -85,6 +84,16 @@ Route::group(['middleware' => ['jwt.verify']], function() {
 
     // Get ebook draft list
     Route::get("ebook/draft/list/{userId}/{pageId}", "EbookController@getDraftList");
+
+    
+    Route::get("advartisment/list/user/{id}", "AdController@getUserAdList");
+    Route::get("advartisment/list/page/{id}", "AdController@viewPageAdList");
+
+    Route::get("home/posts", "HomeController@getPosts");
+    Route::get("home/classified", "HomeController@getClassifieds");
+    Route::get("home/ebooks", "HomeController@getEbooks");
+    Route::get("top/talents", "HomeController@getTopTalentList");
+    Route::get("home/advartisment", "HomeController@getAds");
 });
 
 

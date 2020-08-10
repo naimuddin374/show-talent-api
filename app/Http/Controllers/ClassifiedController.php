@@ -26,19 +26,19 @@ class ClassifiedController extends Controller
 
     public function detail($id)
     {
-        $data = ClassifiedModel::with(['user', 'category', 'page', 'city'])->where(['id' => $id])->orderBy('id', 'desc')->first();
+        $data = ClassifiedModel::with(['user', 'category', 'page'])->where(['id' => $id])->orderBy('id', 'desc')->first();
         return response()->json($data, 200);
     }
 
     public function viewByJoinId($id)
     {
-        $data = ClassifiedModel::with(['user', 'category', 'page', 'city'])->where(['user_id' => $id, 'page_id' => 0, 'status' => 1])->orderBy('id', 'desc')->get();
+        $data = ClassifiedModel::with(['user', 'category', 'page'])->where(['user_id' => $id, 'page_id' => 0, 'status' => 1])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
     public function getPagePost($id)
     {
-        $data = ClassifiedModel::with(['user', 'category', 'page', 'city'])->where(['page_id'=> $id, 'status' => 1])->orderBy('id', 'desc')->get();
+        $data = ClassifiedModel::with(['user', 'category', 'page'])->where(['page_id'=> $id, 'status' => 1])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
     public function approve(Request $request, $id)
@@ -51,6 +51,7 @@ class ClassifiedController extends Controller
             "reject_note" => null,
             'is_unread' => 1,
             'points' => $post['points'],
+            'created_at' => date('Y-m-d H:i:s')
         ];
         $row = ClassifiedModel::findOrFail($id);
         $row->update($data);
@@ -111,13 +112,9 @@ class ClassifiedController extends Controller
             "page_id" => $post['page_id'],
             "type" => $post['type'],
             "contact" => $post['contact'],
-            "email" => $post['email'],
             "title" => $post['title'],
             "description" => $post['description'],
             "price" => $post['price'],
-            "currency" => $post['currency'],
-            "address" => $post['address'],
-            "city_id" => $post['city_id'],
             'created_at' => date('Y-m-d H:i:s')
         ];
 
@@ -149,15 +146,13 @@ class ClassifiedController extends Controller
     {
         $post = $request->all();
         $data = [
+            "page_id" => $post['page_id'],
             "type" => $post['type'],
             "contact" => $post['contact'],
-            "email" => $post['email'],
             "title" => $post['title'],
             "description" => $post['description'],
             "price" => $post['price'],
-            "currency" => $post['currency'],
-            "address" => $post['address'],
-            "city_id" => $post['city_id'],
+            'created_at' => date('Y-m-d H:i:s'),
             "status" => 0
         ];
 

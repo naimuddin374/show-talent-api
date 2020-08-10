@@ -17,25 +17,17 @@ class UserController extends Controller
         return response()->json($data, 200);
     }
 
-
     public function view()
     {
         $data = UserModel::orderBy('id', 'DESC')->get();
         return response()->json($data, 200);
     }
 
-
     public function detail($id)
     {
         $data = UserModel::with(['userInfo', 'education', 'experience', 'follower', 'following.user'])->where(['id' => $id])->first();
         return response()->json($data, 200);
     }
-
-    public function getTopTalentList(){
-        $data = UserModel::orderBy('points', 'DESC')->limit(5)->get();
-        return response()->json($data, 200);
-    }
-
 
     public function store(Request $request)
     {

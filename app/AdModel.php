@@ -12,7 +12,7 @@ use App\AdBudgetModel;
 class AdModel extends Model
 {
     protected $table = 'ads';
-    protected $fillable = ['user_id', 'page_id', 'category_id', 'title', 'image', 'video', 'website', 'start_date', 'end_date', 'status', 'reject_note', 'reopen_note', 'admin_id', 'is_unread', 'points'];
+    protected $fillable = ['user_id', 'page_id', 'category_id', 'title', 'image', 'video', 'website', 'start_date', 'end_date', 'status', 'reject_note', 'reopen_note', 'admin_id', 'is_unread', 'points', 'placement'];
 
     public function user(){
         return $this->belongsTo(UserModel::class);

@@ -1,6 +1,7 @@
 <?php
 use App\UserModel;
 use App\PageModel;
+use App\PreferenceModel;
 
 // add reward point
 function addRewardPoint($userId, $pageId, $points){
@@ -38,6 +39,19 @@ function removeRewardPoint($userId, $pageId, $points){
             }
         }
     }
+}
+
+function getUserPreference(){
+    $auth = auth()->user();
+    $userId = $auth['id'];
+    $preference = PreferenceModel::with(['category'])->where('user_id', $userId)->get();
+    $categories = [];
+    if($preference){
+        foreach($preference as $value){
+            array_push($categories, $value->category_id);
+        }
+    }
+    return $categories;
 }
 
 // addRewardPoint($row->user_id, @$post['points']);

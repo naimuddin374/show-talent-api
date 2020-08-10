@@ -12,7 +12,7 @@ use App\CityModel;
 class ClassifiedModel extends Model
 {
     protected $table = 'classifieds';
-    protected $fillable = ['user_id', 'page_id', 'type', 'category_id', 'contact', 'email', 'title', 'description', 'image', 'price', 'currency', 'address', 'status', 'admin_id', 'reject_note', 'is_unread', 'city_id', 'points', 'created_at'];
+    protected $fillable = ['user_id', 'page_id', 'type', 'category_id', 'contact', 'title', 'description', 'image', 'price', 'status', 'admin_id', 'reject_note', 'is_unread', 'points', 'created_at'];
 
     public function user(){
         return $this->belongsTo(UserModel::class, 'user_id');
@@ -25,8 +25,5 @@ class ClassifiedModel extends Model
     }
     public function gallery(){
         return $this->belongsTo(ClassifiedGalleryModel::class);
-    }
-    public function city(){
-        return $this->belongsTo(CityModel::class, 'city_id');
     }
 }
