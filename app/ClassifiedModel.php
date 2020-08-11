@@ -4,7 +4,6 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\UserModel;
-use App\CategoryModel;
 use App\PageModel;
 use App\ClassifiedGalleryModel;
 use App\CityModel;
@@ -16,9 +15,6 @@ class ClassifiedModel extends Model
 
     public function user(){
         return $this->belongsTo(UserModel::class, 'user_id');
-    }
-    public function category(){
-        return $this->belongsTo(CategoryModel::class, 'category_id');
     }
     public function page(){
         return $this->belongsTo(PageModel::class, 'page_id');

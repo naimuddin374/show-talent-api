@@ -20,7 +20,7 @@ class HomeController extends Controller
 
     public function getClassifieds(){
         $preferences = getUserPreference();
-        $data = ClassifiedModel::where(['status' => 1])->whereIn('category_id', $preferences)->orderBy('id', 'desc')->get();
+        $data = ClassifiedModel::where(['status' => 1])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 

@@ -14,7 +14,7 @@ class ClassifiedController extends Controller
 
     public function adminView()
     {
-        $data = ClassifiedModel::with(['user', 'category', 'page'])->orderBy('id', 'desc')->get();
+        $data = ClassifiedModel::with(['user', 'page'])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
@@ -26,19 +26,19 @@ class ClassifiedController extends Controller
 
     public function detail($id)
     {
-        $data = ClassifiedModel::with(['user', 'category', 'page'])->where(['id' => $id])->orderBy('id', 'desc')->first();
+        $data = ClassifiedModel::with(['user', 'page'])->where(['id' => $id])->orderBy('id', 'desc')->first();
         return response()->json($data, 200);
     }
 
     public function viewByJoinId($id)
     {
-        $data = ClassifiedModel::with(['user', 'category', 'page'])->where(['user_id' => $id, 'page_id' => 0, 'status' => 1])->orderBy('id', 'desc')->get();
+        $data = ClassifiedModel::with(['user', 'page'])->where(['user_id' => $id, 'page_id' => 0, 'status' => 1])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
 
     public function getPagePost($id)
     {
-        $data = ClassifiedModel::with(['user', 'category', 'page'])->where(['page_id'=> $id, 'status' => 1])->orderBy('id', 'desc')->get();
+        $data = ClassifiedModel::with(['user', 'page'])->where(['page_id'=> $id, 'status' => 1])->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
     public function approve(Request $request, $id)
