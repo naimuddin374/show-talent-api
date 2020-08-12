@@ -171,6 +171,8 @@ class EbookController extends Controller
 
     public function delete($id)
     {
+        ChapterModel::where('ebook_id', $id)->delete();
+        
         $row = EbookModel::findOrFail($id);
 
         $image_path = $row->front_image;
