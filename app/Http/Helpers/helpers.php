@@ -2,6 +2,7 @@
 use App\UserModel;
 use App\PageModel;
 use App\PreferenceModel;
+use App\FollowerModel;
 
 // add reward point
 function addRewardPoint($userId, $pageId, $points){
@@ -52,6 +53,32 @@ function getUserPreference(){
         }
     }
     return $categories;
+}
+
+function getFollowProfile(){
+    $auth = auth()->user();
+    $userId = $auth['id'];
+    $sel_data = FollowerModel::where(['user_id' => $userId, 'is_page' => 0])->get();
+    $profileIds = [];
+    if($sel_data){
+        foreach($sel_data as $value){
+            array_push($profileIds, $value->profile_id);
+        }
+    }
+    return $profileIds;
+}
+
+function getFollowPage(){
+    $auth = auth()->user();
+    $userId = $auth['id'];
+    $sel_data = FollowerModel::where(['user_id' => $userId, 'is_page' => 1])->get();
+    $profileIds = [];
+    if($sel_data){
+        foreach($sel_data as $value){
+            array_push($profileIds, $value->profile_id);
+        }
+    }
+    return $profileIds;
 }
 
 // addRewardPoint($row->user_id, @$post['points']);

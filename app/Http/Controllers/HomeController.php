@@ -14,6 +14,9 @@ class HomeController extends Controller
 {
     public function getPosts(){
         $preferences = getUserPreference();
+        $followProfiles = getFollowProfile();
+        $followPages = getFollowPage();
+
         $data = PostModel::with(['user', 'category', 'page', 'likes', 'comments.user'])->where(['status' => 1])->whereIn('category_id', $preferences)->orderBy('id', 'desc')->get();
         return response()->json($data, 200);
     }
